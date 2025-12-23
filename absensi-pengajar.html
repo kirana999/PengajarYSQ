@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi - Sahabat Quran</title>
+    
+    <link rel="stylesheet" href="pengajar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="allow-scroll">
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logoYSQ.png" alt="Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="dashboard-pengajar.html" class="nav-link">
+                            <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="jadwal-kelas-pengajar.html" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i> <span>Jadwal Kelas</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="absensi-pengajar.html" class="nav-link">
+                            <i class="fas fa-check-square"></i> <span>Absensi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="materi-ajar.html" class="nav-link">
+                            <i class="fas fa-book"></i> <span>Materi Ajar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="rapor-santri.html" class="nav-link">
+                            <i class="fas fa-file-alt"></i> <span>Rapor</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="laporan-pengajar.html" class="nav-link">
+                            <i class="fas fa-chart-bar"></i> <span>Laporan</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <ul>
+                    <li><i class="fas fa-cog"></i> Pengaturan</li>
+                    <li class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Absensi</h1>
+                <div class="user-profile">
+                    <span>Pengajar</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <section class="absensi-page-content">
+                <div class="card absensi-main-card">
+                    <div class="absensi-header-row">
+                        <h2>Absensi Santri</h2>
+                        <button class="btn-tambah-catatan" onclick="openCatatanModal()">
+                            Tambah Catatan Materi
+                        </button>
+                    </div>
+
+                    <div class="filter-absen-row">
+                        <div class="filter-group">
+                            <label>Pengajar:</label>
+                            <input type="text" value="Pengajar" readonly class="input-readonly">
+                        </div>
+                        <div class="filter-group">
+                            <label>Pilih Kelas:</label>
+                            <select id="pilihKelasAbsen">
+                                <option value="Tazwid">Tazwid</option>
+                                <option value="Usmani 1">Usmani 1</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Tanggal:</label>
+                            <input type="date" id="tanggalAbsen" value="2025-12-23">
+                        </div>
+                    </div>
+
+                    <div class="absen-pengajar-box">
+                        <div class="absen-pengajar-input">
+                            <label>Absen Pengajar Hari Ini:</label>
+                            <select id="statusAbsenPengajar">
+                                <option value="Hadir">Hadir</option>
+                                <option value="Izin">Izin</option>
+                                <option value="Sakit">Sakit</option>
+                            </select>
+                            <button class="btn-simpan-absen" id="simpanAbsenPengajar">Simpan</button>
+                        </div>
+                    </div>
+
+                    <div class="label-jam-absen">
+                        <span class="badge-hari">Absen Hari Ini</span>
+                        <span class="jam-val" id="jamAbsenDisplay">00.00 - 00.00</span>
+                    </div>
+
+                            <table class="table-absensi-santri">
+    <thead>
+        <tr>
+            <th>NO</th>
+            <th>NAMA SANTRI</th>
+            <th>NIS</th>
+            <th>STATUS KEHADIRAN</th>
+        </tr>
+    </thead>
+    <tbody id="absensiSantriBody">
+        <tr>
+            <td>1</td>
+            <td><strong>Ahmad Fauzi</strong></td>
+            <td class="nis-column">2025001</td>
+            <td>
+                <select class="select-status-santri">
+                    <option value="" disabled selected>- Pilih Status -</option>
+                    <option value="Hadir">Hadir</option>
+                    <option value="Izin">Izin</option>
+                    <option value="Sakit">Sakit</option>
+                    <option value="Alfa">Alfa</option>
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+                   <div class="absensi-footer">
+    <a href="riwayat-absensi.html" class="btn-view-riwayat" style="text-decoration: none; display: inline-block;">
+        <i class="fas fa-history"></i> Lihat Riwayat Absensi
+    </a>
+</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="catatanModal" class="modal modal-materi">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeCatatanModal()">&times;</span>
+            <h3 id="modalTitle">Tambah Catatan Materi</h3> 
+            <textarea id="classNoteInput" placeholder="Masukkan detail di sini..."></textarea>
+            <div class="modal-footer">
+                <button class="btn-batal" onclick="closeCatatanModal()">Batal</button>
+                <button class="btn-simpan" id="saveNoteButton">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastNotification" class="toast"></div>
+    <div id="toast-container" class="toast-container"></div>
+    
+    <script src="pengajar.js"></script>
+</body>
+</html>
