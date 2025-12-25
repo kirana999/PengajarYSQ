@@ -124,7 +124,7 @@ body {
     height: 100vh; /* Kunci tinggi */
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* KUNCI: Scrollbar muncul di sini saja */
+    overflow-y: hidden;
     background-color: var(--bg-color);
 }
 
@@ -433,112 +433,144 @@ table {
 }
 
 /* ==========================================================================
-   ANNOUNCEMENT & MODAL
+   TAMBAHAN UNTUK FITUR PENGUMUMAN & MODAL LIST (TETAPKAN DI BAWAH)
    ========================================================================== */
 
-.announcement-card {
-    flex: 1; /* Ini akan memaksa card memanjang ke bawah */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Menjaga konten tetap di tengah secara vertikal */
-    align-items: center;
-    min-height: 0; /* Penting untuk stabilitas flexbox */
-    padding: 30px 20px;
-    margin-bottom: 10px;
-}
-
-.muted-note {
-    font-size: 13px;
-    color: #777;
-    margin-top: 15px;
-    margin-bottom: 10px;
-}
-
-#announcement-list {
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* 2. Wrapper untuk animasi berputar */
-.announcement-scroll-wrapper {
-    display: flex;
-    flex-direction: column;
-}
-
-/* 3. Berhenti seketika saat mouse di atas area pengumuman */
-#announcement-list:hover .announcement-scroll-wrapper {
-    animation-play-state: paused !important;
-}
-
-/* 4. KUNCI UKURAN: Setiap item pengumuman tingginya kaku (fixed) */
-/* Container daftar pengumuman */
-#announcement-list {
-    height: 250px; /* Batasi tinggi total area pengumuman di dalam card */
-    overflow: hidden; 
-    position: relative;
-    margin-top: 15px;
-}
-
-/* Item pengumuman individu - UKURAN TETAP */
-.announcement-item {
-    flex-shrink: 0;
-    height: 90px; /* TINGGI DIKUNCI: Tidak akan berubah mau teks panjang/pendek */
+/* Pastikan area pengumuman tetap bersih */
+.announcement-summary-wrapper {
+    text-align: center;
+    padding: 10px 0;
     width: 100%;
-    margin-bottom: 12px;
-    background: #f1f8e9;
-    border-left: 4px solid #275238;
-    padding: 12px 15px;
-    border-radius: 10px;
-    position: relative;
-    box-sizing: border-box; /* Memastikan padding tidak menambah tinggi */
-    
-    /* Mencegah teks keluar dari kotak 90px */
-    overflow: hidden; 
-    
+}
+
+/* Kotak indikator jumlah catatan di dashboard */
+.summary-box {
+    margin-top: 10px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    transition: 0.3s;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    pointer-events: none; /* Card sendiri tidak bisa diklik agar animasi stabil */
+    align-items: center;
+    gap: 10px;
 }
 
-/* Memotong teks panjang di dalam kartu */
-.announcement-item p {
-    margin: 5px 40px 0 0; /* Ruang untuk ikon siaran di kanan */
-    font-size: 13px;
-    line-height: 1.4;
-    color: #333;
-    
-    /* Batasi teks hanya muncul maksimal 2 baris */
-    display: -webkit-box;
-    -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Tambahkan titik-titik (...) otomatis */
+/* Warna berubah jika sudah ada catatan */
+.summary-box.has-data {
+    background: #e8f5e9;
+    border-color: var(--primary-green);
 }
 
-/* Ikon Siaran (Satu-satunya area yang merespons klik detail) */
-.broadcast-icon {
-    position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
-    pointer-events: auto; /* Aktifkan klik hanya untuk ikon */
+/* Tombol Lihat Semua di dashboard */
+.btn-show-list {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    z-index: 10;
-    background: white;
-    width: 30px;
-    height: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    gap: 8px;
+    transition: 0.3s;
 }
 
-/* 7. Animasi Putar Vertikal */
-@keyframes scrollAnnouncements {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-50%); }
+.btn-show-list:hover {
+    background-color: #214430;
+    transform: translateY(-2px);
+}
+
+/* Container list catatan di dalam MODAL */
+.full-note-scroll-area {
+    max-height: 450px;
+    overflow-y: auto;
+    padding: 10px 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Styling Item Catatan di dalam Modal Popup */
+.full-note-scroll-area .announcement-item {
+    background: #f9f9f9;
+    border-left: 4px solid var(--primary-green);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between; /* Menarik konten ke kiri, tombol hapus ke kanan */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0; /* Menggantikan margin-bottom global */
+}
+
+/* Wrapper teks di dalam item */
+.note-content {
+    flex: 1;
+    text-align: left;
+}
+
+/* Styling teks di dalam item pengumuman agar bisa di-scroll jika panjang */
+.announcement-item .note-content p {
+    max-height: 60px;    /* Batasi tinggi area teks pengumuman */
+    overflow-y: auto;    /* Aktifkan scroll vertikal jika teks melebihi max-height */
+    padding-right: 5px;  /* Beri sedikit ruang agar scrollbar tidak menutupi teks */
+    word-break: break-word; /* Pastikan kata yang sangat panjang terpotong ke bawah */
+    line-height: 1.5;    /* Mengatur jarak antar baris agar nyaman dibaca */
+}
+
+/* Mempercantik tampilan scrollbar mini di dalam kotak catatan */
+.announcement-item .note-content p::-webkit-scrollbar {
+    width: 4px;
+}
+
+.announcement-item .note-content p::-webkit-scrollbar-thumb {
+    background: #dcedc8; /* Gunakan warna hijau muda agar serasi */
+    border-radius: 10px;
+}
+
+/* Tombol Hapus (Ikon Sampah) */
+.delete-announcement {
+    color: #ff8a80;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.delete-announcement:hover {
+    color: #d32f2f;
+    background-color: rgba(211, 47, 47, 0.1);
+    transform: scale(1.1);
+}
+
+/* Pesan kosong di popup */
+.empty-msg-container {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-msg-container i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+/* Custom Scrollbar untuk Modal List */
+.full-note-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.full-note-scroll-area::-webkit-scrollbar-thumb {
+    background: #dcedc8;
+    border-radius: 10px;
 }
 
 /* ==========================================================================
@@ -762,6 +794,145 @@ table {
 }
 
 /* ==========================================================================
+   MINI CARD PROFIL (HASIL SYNC DARI PENGATURAN PROFIL)
+   ========================================================================== */
+
+/* Container Wrapper untuk posisi absolute */
+.user-profile-wrapper {
+    position: relative;
+}
+
+/* Styling Mini Card Utama */
+.mini-profil-card {
+    display: none; /* Sembunyi default, muncul via JS toggleMiniProfil() */
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 250px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 20px;
+    animation: profileFadeIn 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.mini-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Avatar Inisial - Bagian ini yang akan berubah otomatis sesuai Nama di Profil */
+.mini-avatar {
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary-green);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Nama yang akan sinkron dengan input-nama di modal profil */
+.mini-card-content h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.mini-card-content p {
+    font-size: 13px;
+    color: #666;
+    margin: 2px 0;
+}
+
+.mini-card-content hr {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 15px 0;
+}
+
+/* Tombol untuk membuka Modal Pengaturan Profil */
+.btn-edit-profil {
+    background: none;
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+}
+
+.btn-edit-profil:hover {
+    background: var(--primary-green);
+    color: white;
+}
+
+/* Popup lihat detail pengumuman */
+
+/* Container list catatan di dalam MODAL */
+.full-note-scroll-area {
+    /* Gunakan max-height sekitar 330px - 350px untuk membatasi hanya 3 catatan */
+    max-height: 340px; 
+    overflow-y: auto;  /* Aktifkan scrollbar jika lebih dari 3 catatan */
+    padding: 10px 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Styling Item Catatan Individu agar ukuran seragam */
+.full-note-scroll-area .announcement-item {
+    min-height: 100px; /* Menjaga tinggi item tetap konsisten */
+    position: relative;
+    background: #f9f9f9;
+    border-left: 5px solid var(--primary-green);
+    padding: 15px 45px 15px 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Ikon Tempat Sampah di masing-masing kotak */
+.full-note-scroll-area .delete-announcement {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff5252;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px;
+    transition: 0.3s;
+    display: block !important; /* Pastikan muncul */
+}
+
+.full-note-scroll-area .delete-announcement:hover {
+    color: #d32f2f;
+    transform: translateY(-50%) scale(1.2);
+}
+
+/* Mempercantik Scrollbar */
+.full-note-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+.full-note-scroll-area::-webkit-scrollbar-thumb {
+    background: #dcedc8;
+    border-radius: 10px;
+}
+
+/* ==========================================================================
    BAGIAN HALAMAN JADWAL KELAS
    ========================================================================== */
 /* Filter bar styling */
@@ -812,28 +983,314 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    table-layout: fixed; /* Mengunci lebar kolom agar sejajar */
+}
+
+/* Gabungkan Header (th) dan Isi (td) agar sejajar sempurna */
+.table-lengkap th, 
+.table-lengkap td {
+    text-align: center;      /* Rata kiri untuk semua */
+    padding: 15px 10px;    /* Padding identik */
+    vertical-align: middle;
+    font-family: 'Poppins', sans-serif;
 }
 
 .table-lengkap th {
-    text-align: left;
-    color: #999;
-    font-size: 12px;
+    color: #999;           /* Warna abu-abu sesuai gambar */
+    font-size: 11px;
+    text-transform: uppercase;
     letter-spacing: 1px;
-    padding: 15px 10px;
     border-bottom: 2px solid #f5f5f5;
 }
 
 .table-lengkap td {
-    padding: 18px 10px;
     border-bottom: 1px solid #fcfcfc;
     color: #444;
+    font-size: 14px;
 }
 
-.detail-link {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
+/* Tentukan lebar kolom agar judul tidak melompat */
+.table-lengkap th:nth-child(1) { width: 12%; } /* HARI */
+.table-lengkap th:nth-child(2) { width: 18%; } /* WAKTU */
+.table-lengkap th:nth-child(3) { width: 20%; } /* KELAS */
+.table-lengkap th:nth-child(4) { width: 15%; } /* KATEGORI */
+.table-lengkap th:nth-child(5) { width: 15%; } /* PENGAJAR */
+.table-lengkap th:nth-child(6) { width: 20%; } /* AKSI */
+
+/* Kolom terakhir (AKSI) diposisikan di tengah */
+.table-lengkap th:last-child,
+.table-lengkap td:last-child {
+    text-align: center;
+}
+
+/* Tombol Detail sesuai gambar */
+.btn-detail {
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
     font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.3s;
+}
+
+.btn-detail:hover {
+    background: #f5f5f5;
+}
+
+/* Tombol utama pembuka popup tugas */
+.btn-add-task {
+    background-color: #fcf9f2; /* Krem muda */
+    color: #c4a773;           /* Warna cokelat/emas */
+    border: 2px dashed #c4a773; /* Garis putus-putus */
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-add-task:hover {
+    background-color: #c4a773; 
+    color: white;              
+    border-style: solid;       
+    box-shadow: 0 4px 10px rgba(196, 167, 115, 0.2);
+}
+
+/* ==========================================================================
+   STYLING POPUP / MODAL TAMBAH TUGAS (TAMBAHAN)
+   ========================================================================== */
+
+/* Overlay Latar Belakang Modal */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(4px); /* Memberikan efek blur pada dashboard saat popup muncul */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kotak Konten Modal Tugas */
+.task-modal {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    animation: popUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Judul dan Subtitle */
+.task-modal h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.modal-subtitle {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* Pengaturan Field Input */
+.task-field {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.task-field label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 8px;
+}
+
+.task-field label i {
+    color: var(--primary-green);
+    margin-right: 5px;
+}
+
+/* Input Text & Textarea khusus Modal */
+.task-field .input-detail, 
+.task-field .textarea-detail {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    background-color: #fcfcfc;
+    transition: 0.3s;
+}
+
+.task-field .textarea-detail {
+    height: 100px;
+    resize: none;
+}
+
+.task-field .input-detail:focus, 
+.task-field .textarea-detail:focus {
+    border-color: var(--primary-green);
+    background-color: #fff;
+    outline: none;
+}
+
+/* Container pembungkus input file */
+.file-input-wrapper {
+    background: #fdfdfd; /* Warna background sangat muda agar senada dengan input lain */
+    padding: 10px;
+    border-radius: 10px;
+    border: 1.5px dashed #ccc; /* Menggunakan garis putus-putus untuk kesan 'dropzone' */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Mengatur tampilan tombol "Choose File" bawaan browser */
+.file-input-wrapper input[type="file"]::file-selector-button {
+    background-color: #f5f5f5;
+    color: #444;
+    padding: 6px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+}
+
+/* Efek hover pada tombol choose file */
+.file-input-wrapper input[type="file"]::file-selector-button:hover {
+    background-color: #e8e8e8;
+    border-color: #ccc;
+}
+
+/* Efek saat input file difokuskan atau hover pada area dashed */
+.file-input-wrapper:hover {
+    border-color: #2d5a3f; /* Warna hijau utama YSQ saat hover */
+    background-color: #f8fcf9;
+}
+
+/* Mengatur teks "No file chosen" */
+.file-input-wrapper input[type="file"] {
+    font-size: 13px;
+    color: #888;
+    width: 100%;
+}
+
+/* Container footer untuk tombol Batal dan Kirim */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    min-height: 45px; /* Mengunci tinggi agar tidak goyang saat elemen di atasnya berubah */
+    align-items: center;
+}
+
+/* Tombol Kirim ke Kelas yang Stabil */
+.task-modal .btn-simpan {
+    background-color: var(--primary-green);
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    
+    /* KUNCI STABILITAS */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;       /* Lebar tetap agar teks tidak geser */
+    height: 45px;          /* Tinggi tetap agar tidak goyang naik-turun */
+    transition: background-color 0.2s ease; /* Hanya transisi warna */
+    
+    /* Mencegah pergeseran pixel */
+    transform: translateZ(0); 
+    backface-visibility: hidden;
+    vertical-align: middle;
+}
+
+/* Hover yang Aman (Hanya warna, tidak ada gerakan) */
+.task-modal .btn-simpan:hover {
+    background-color: #214430;
+    /* JANGAN tambahkan transform: translateY atau scale di sini */
+}
+
+/* Efek Klik yang subtle tanpa menggeser layout */
+.task-modal .btn-simpan:active {
+    background-color: #1a3626;
+    opacity: 0.9;
+}
+
+/* Pastikan Footer tidak berubah tinggi */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    height: 45px; /* Samakan dengan tinggi tombol */
+    align-items: center;
+}
+
+/* Tombol Batal yang Stabil */
+.task-modal .btn-batal {
+    background-color: #f5f5f5;
+    color: #666;
+    border: 1px solid #e0e0e0; /* Border halus agar bentuknya tegas */
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    
+    /* KUNCI STABILITAS */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    height: 45px; /* Tinggi harus sama dengan .btn-simpan */
+    transition: all 0.2s ease;
+    
+    /* Menghilangkan efek goyang pixel */
+    transform: translateZ(0);
+}
+
+/* Hover Batal (Hanya warna) */
+.task-modal .btn-batal:hover {
+    background-color: #eeeeee;
+    color: #333;
+    border-color: #ccc;
+}
+
+/* Efek Klik Batal */
+.task-modal .btn-batal:active {
+    background-color: #e0e0e0;
+    transform: scale(0.98);
 }
 
 /* ==========================================================================
@@ -1017,6 +1474,7 @@ table {
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
+    text-decoration:none;
 }
 
 /* Styling Tombol Ikon Catatan */
@@ -1283,4 +1741,409 @@ table {
     font-weight: 600;
     margin-top: 25px;
 }
+
+/* ==========================================================================
+   STYLING DETAIL ROW BAGIAN TABEL JADWAL KELAS
+   ========================================================================== */
+
+/* Styling Detail Row */
+.detail-row {
+    display: none; /* Sembunyi default */
+    background-color: #fcfcfc;
+}
+
+.detail-row.active {
+    display: table-row;
+    animation: slideDown 0.3s ease-out;
+}
+
+.detail-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 20px;
+    border-left: 4px solid #2d5a27; /* Aksen warna hijau */
+    background: #f9f9f9;
+}
+
+.detail-col {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.highlight-col {
+    border: 1px solid #d4b884;
+    background-color: #fffdf9;
+}
+
+.icon-header {
+    font-size: 24px;
+    color: #2d5a27;
+    margin-bottom: 10px;
+}
+
+.detail-col h4 {
+    margin: 5px 0;
+    font-size: 15px;
+    color: #333;
+}
+
+.sub-text {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+/* Input & Textarea */
+.input-detail, .textarea-detail {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 15px;
+    font-family: inherit;
+}
+
+.textarea-detail {
+    height: 60px;
+    resize: none;
+}
+
+/* Buttons */
+.btn-save-small {
+    background-color: #d4b884; /* Warna emas muda */
+    color: #333;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-save-small:hover {
+    background-color: #c4a773;
+}
+
+.btn-link-absensi {
+    text-decoration: none;
+    color: #2d5a27;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.attendance-summary {
+    margin: 10px 0;
+}
+
+.attendance-summary .count {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2d5a27;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Styling Tombol Detail di Tabel */
+.btn-detail {
+    background: transparent;
+    border: 1px solid #2d5a27; /* Menggunakan warna hijau utama YSQ */
+    color: #2d5a27;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Efek Hover (Saat kursor di atas tombol) */
+.btn-detail:hover {
+    background-color: #2d5a27;
+    color: white;
+    box-shadow: 0 4px 8px rgba(45, 90, 39, 0.2);
+}
+
+/* Efek Saat Tombol Aktif (Detail Terbuka) */
+.main-row.active-row .btn-detail {
+    background-color: #d4b884; /* Warna emas saat detail terbuka */
+    border-color: #d4b884;
+    color: #333;
+}
+
+/* Styling Ikon di dalam Tombol */
+.btn-detail i {
+    font-size: 12px;
+}
+
+/* Tambahan: Pastikan teks di kolom AKSI berada di tengah */
+.table-lengkap td:last-child {
+    text-align: center;
+}
+
+/* =========================================
+   MODAL OVERLAY & CONTAINER (PENGATURAN PROFIL)
+   ========================================= */
+#profilOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+}
+
+#profilOverlay .modal-profil {
+    width: 90%;
+    max-width: 800px;
+    height: 85vh; 
+    background: #fff;
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: profileScaleIn 0.3s ease;
+}
+
+/* BAGIAN KIRI: AVATAR & TOMBOL (FIXED) */
+
+#profilOverlay .modal-left {
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    /* KUNCI: Membuat ruang yang seimbang antara atas dan bawah */
+    justify-content: space-between; 
+    align-items: center;
+    padding: 40px 25px;
+    background-color: #ffffff;
+    border-right: 1px solid #f0f0f0;
+    flex-shrink: 0;
+}
+
+/* Container Avatar agar posisinya stabil di atas */
+#profilOverlay .profile-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#profilOverlay .image-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #1f4f3f; /* Hijau gelap agar kontras dengan huruf putih */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 65px; /* Huruf inisial sedikit diperbesar */
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+/* Teks label di bawah avatar */
+#profilOverlay .modal-left p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+/* Container Tombol di bagian bawah kiri */
+#profilOverlay .modal-footer-left {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* KUNCI: Memastikan tombol selalu di paling bawah */
+    margin-top: auto; 
+}
+
+#profilOverlay .btn-primary {
+    background: #1f4f3f;
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#profilOverlay .btn-batal {
+    background: #f5f5f5;
+    color: #666;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#profilOverlay .btn-batal:hover {
+    background: #eeeeee;
+}
+
+/* BAGIAN KANAN: FORM & PASSWORD (SCROLL) */
+#profilOverlay .modal-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+#profilOverlay .modal-right::-webkit-scrollbar {
+    width: 6px;
+}
+#profilOverlay .modal-right::-webkit-scrollbar-thumb {
+    background: #eee;
+    border-radius: 10px;
+}
+
+#profilOverlay .modal-body {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* KUNCI 1: Semua anak di body sejajar kiri */
+    gap: 20px;
+}
+
+#profilOverlay .form-group {
+    width: 100%;
+}
+
+#profilOverlay .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #444;
+}
+
+#profilOverlay .form-group input,
+#profilOverlay .form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    background: #fcfcfc;
+    font-size: 14px;
+}
+
+/* Password Section & Ubah Password Link */
+#profilOverlay .password-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* KUNCI 2: Pastikan sejajar ke kiri */
+}
+
+#profilOverlay .toggle-password {
+    background: none;
+    border: none;
+    color: #1f4f3f;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;           /* KUNCI 3: Hapus padding bawaan button */
+    margin: 10px 0 5px 0; /* Sesuaikan margin untuk jarak */
+    display: block;
+    text-align: left;     /* KUNCI 4: Paksa teks lurus kiri */
+    font-size: 14px;
+    width: auto;          /* Biarkan lebar mengikuti teks */
+}
+
+#profilOverlay .password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#profilOverlay .password-input-container input {
+    padding-right: 45px;
+}
+
+#profilOverlay .toggle-eye {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    color: #888;
+    font-size: 16px;
+    z-index: 5;
+}
+
+#profilOverlay .password-fields {
+    display: none; 
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+    width: 100%;
+    animation: profileFadeIn 0.3s ease;
+}
+
+#profilOverlay .error-text {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: -5px;
+    font-weight: 500;
+}
+
+/* --- HILANGKAN MATA BAWAAN BROWSER --- */
+/* Menghilangkan ikon mata bawaan Microsoft Edge */
+input::-ms-reveal {
+    display: none;
+}
+
+/* Menghilangkan tombol 'X' (clear) bawaan Edge/IE */
+input::-ms-clear {
+    display: none;
+}
+
+/* Menghilangkan fitur auto-fill button pada Chrome/Safari */
+input::-webkit-contacts-auto-fill-button, 
+input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute; 
+    right: 0;
+}
+
+/* ANIMASI & BROWSER FIX */
+@keyframes profileScaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes profileFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
 

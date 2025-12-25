@@ -1,26 +1,18 @@
 /* ==========================================================================
-   BAGIAN 1: GLOBAL CONFIGURATION (KONFIGURASI UMUM)
+   BAGIAN 1: UI ELEMENTS & GLOBAL STATE
    ========================================================================== */
-const BASE_URL = "http://localhost:5000";
-const getToken = () => localStorage.getItem("token");
-
-// Elements untuk Kalender & Reminder
 const calendarDays = document.getElementById("calendar-days");
 const monthYearText = document.getElementById("calendar-month-year");
 const reminderModal = document.getElementById("reminderModal");
 const reminderInput = document.getElementById("reminderInput");
 const announcementList = document.getElementById("announcement-list");
-let selectedDate = "";
 
-// Global Variables
+let selectedDate = "";
 let catatanKelasHariIni = "";
-let currentSelectedClassData = {
-    materi: "",
-    tugas: ""
-};
+let currentSelectedClassData = { materi: "", tugas: "" };
 
 /* ==========================================================================
-   BAGIAN 2: FRONTEND LOGIC (NAVIGASI, MODAL, & UI)
+   BAGIAN 2: FRONTEND LOGIC (NAVIGASI & MODAL)
    ========================================================================== */
 
 // 1. HANDLING NAVIGASI SIDEBAR
@@ -36,7 +28,6 @@ navItems.forEach((item) => {
         navItems.forEach((n) => n.classList.remove("active"));
         item.classList.add("active");
 
-        // Sembunyikan SEMUA section secara fisik agar tidak bertumpuk
         sections.forEach((s) => {
             s.classList.remove("active");
             s.style.display = "none"; 
@@ -49,26 +40,190 @@ navItems.forEach((item) => {
             mainTitle.textContent = item.querySelector("span").textContent;
         }
 
-        if (typeof handleMenuLoad === "function") {
-            handleMenuLoad(targetId);
-        }
+        handleMenuLoad(targetId);
     });
 });
 
-// 2. HANDLING MODALS (FUNGSI UMUM)
-document.querySelectorAll(".close-button, .btn-batal").forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
-    };
+// 2. HANDLING MODALS (FUNGSI PENUTUP TERPADU)
+function closeAllModals() {
+    document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
+    
+    const profilOverlay = document.getElementById("profilOverlay");
+    if (profilOverlay) {
+        profilOverlay.style.display = "none";
+        document.body.style.overflow = ""; 
+    }
+}
+
+document.querySelectorAll(".close-button, .btn-batal, .close-profil-btn").forEach(btn => {
+    btn.onclick = closeAllModals;
 });
 
 window.onclick = (event) => {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = "none";
+    if (event.target.classList.contains('modal') || event.target.id === "profilOverlay") {
+        closeAllModals();
+    }
+    if (!event.target.closest('.user-profile-wrapper')) {
+        const miniCard = document.getElementById("miniProfilCard");
+        if (miniCard) miniCard.style.display = "none";
     }
 };
 
-// 3. LOGIKA KALENDER & INPUT REMINDER
+/* ==========================================================================
+   BAGIAN 3: POPUP PROFIL & HEADER SYNC
+   ========================================================================== */
+
+function openProfil() {
+    const overlay = document.getElementById("profilOverlay");
+    if (overlay) {
+        overlay.style.display = "flex";
+        document.body.style.overflow = "hidden"; 
+    }
+}
+
+function updateInitials() {
+    const inputNama = document.getElementById("input-nama");
+    const profileInitials = document.getElementById("profile-initials");
+    const headerInitials = document.getElementById("header-initials");
+    const miniInitials = document.getElementById("mini-avatar-initials");
+
+    if (!inputNama) return;
+    const nama = inputNama.value.trim();
+    const inisial = nama !== "" ? nama.charAt(0).toUpperCase() : "?";
+
+    if (profileInitials) profileInitials.innerText = inisial;
+    if (headerInitials) headerInitials.innerText = inisial;
+    if (miniInitials) miniInitials.innerText = inisial;
+}
+
+function handleSimpanPerubahan() {
+    // Ambil elemen Input (Sumber Data)
+    const inputNama = document.getElementById("input-nama");
+    const inputEmail = document.getElementById("input-email");
+    const inputWA = document.getElementById("input-wa");
+
+    // Ambil elemen Tampilan (Target di Header & Mini Card)
+    const headerUserName = document.getElementById("header-user-name");
+    const miniNama = document.getElementById("mini-nama");
+    const miniEmail = document.getElementById("mini-email");
+    const miniPhone = document.getElementById("mini-phone");
+
+    if (inputNama && inputNama.value.trim() !== "") {
+        const namaLengkap = inputNama.value.trim();
+        const namaDepan = namaLengkap.split(" ")[0];
+
+        // 1. Update Nama (Header & Mini Card)
+        if (headerUserName) headerUserName.innerText = namaDepan;
+        if (miniNama) miniNama.innerText = namaLengkap;
+
+        // 2. Update Email (Mini Card)
+        if (miniEmail && inputEmail) {
+            miniEmail.innerHTML = `<i class="fas fa-envelope"></i> ${inputEmail.value.trim()}`;
+        }
+
+        // 3. Update Nomor Telepon (Mini Card)
+        if (miniPhone && inputWA) {
+            miniPhone.innerHTML = `<i class="fab fa-whatsapp"></i> ${inputWA.value.trim()}`;
+        }
+
+        // Jalankan update inisial agar sinkron
+        updateInitials();
+        
+        showToast("Profil berhasil diperbarui!", "success");
+        closeAllModals(); 
+    } else {
+        showToast("Nama tidak boleh kosong!", "error");
+    }
+}
+
+function toggleMiniProfil() {
+    const card = document.getElementById("miniProfilCard");
+    if (card) {
+        card.style.display = (card.style.display === "block") ? "none" : "block";
+    }
+}
+
+function togglePasswordFields() {
+    const fields = document.getElementById("passwordFields");
+    const btn = document.getElementById("btnTogglePw");
+
+    if (fields && btn) {
+        // Cek apakah kolom sedang tersembunyi
+        const isHidden = fields.style.display === "none" || fields.style.display === "";
+
+        if (isHidden) {
+            // JIKA TERTUTUP: Buka kolom dan ubah teks jadi Batal
+            fields.style.display = "flex"; // Pastikan CSS menggunakan flex untuk layout kolom
+            btn.innerText = "Batal Ubah Password";
+            btn.style.color = "#ff5252"; // Ubah warna jadi merah (opsional)
+        } else {
+            // JIKA TERBUKA: Tutup kolom dan kembalikan teks asli
+            fields.style.display = "none";
+            btn.innerText = "Ubah Password";
+            btn.style.color = ""; // Kembalikan warna asli (hijau)
+            
+            // Bersihkan inputan demi keamanan saat dibatalkan
+            document.getElementById("pw-lama").value = "";
+            document.getElementById("pw-baru").value = "";
+            document.getElementById("pw-konfirmasi").value = "";
+            document.getElementById("password-error").style.display = "none";
+        }
+    }
+}
+
+/**
+ * Fungsi untuk validasi kecocokan password secara real-time
+ */
+function validatePassword() {
+    const pwBaru = document.getElementById("pw-baru").value;
+    const pwKonfirmasi = document.getElementById("pw-konfirmasi").value;
+    const errorText = document.getElementById("password-error");
+    const btnSimpan = document.querySelector(".modal-left .btn-primary");
+
+    // Jika konfirmasi masih kosong, jangan tampilkan error dulu
+    if (pwKonfirmasi === "") {
+        errorText.style.display = "none";
+        if (btnSimpan) btnSimpan.disabled = false;
+        return;
+    }
+
+    if (pwBaru !== pwKonfirmasi) {
+        errorText.style.display = "block";
+        if (btnSimpan) {
+            btnSimpan.disabled = true;
+            btnSimpan.style.opacity = "0.5";
+            btnSimpan.style.cursor = "not-allowed";
+        }
+    } else {
+        errorText.style.display = "none";
+        if (btnSimpan) {
+            btnSimpan.disabled = false;
+            btnSimpan.style.opacity = "1";
+            btnSimpan.style.cursor = "pointer";
+        }
+    }
+}
+
+/**
+ * Fungsi untuk melihat/sembunyikan password (Toggle Eye)
+ */
+function toggleVisibility(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+    } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+    }
+}
+
+/* ==========================================================================
+   BAGIAN 4: KALENDER & PENGUMUMAN
+   ========================================================================== */
+
 function generateCalendar() {
     if (!calendarDays || !monthYearText) return;
     const now = new Date();
@@ -82,27 +237,19 @@ function generateCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     calendarDays.innerHTML = "";
-
-    // A. TAMBAHKAN NAMA HARI TERLEBIH DAHULU
     const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
     dayNames.forEach(name => {
-        const dayNameEl = document.createElement("div");
-        dayNameEl.innerText = name;
-        dayNameEl.classList.add("day-name"); // Sesuai dengan CSS yang kita buat
-        calendarDays.appendChild(dayNameEl);
+        const el = document.createElement("div");
+        el.innerText = name; el.classList.add("day-name");
+        calendarDays.appendChild(el);
     });
 
-    // B. TAMBAHKAN OFFSET (KOTAK KOSONG) UNTUK AWAL BULAN
-    for (let i = 0; i < firstDay; i++) {
-        calendarDays.appendChild(document.createElement("div"));
-    }
+    for (let i = 0; i < firstDay; i++) calendarDays.appendChild(document.createElement("div"));
 
-    // C. TAMBAHKAN ANGKA TANGGAL
     for (let d = 1; d <= daysInMonth; d++) {
         const dayEl = document.createElement("div");
         dayEl.innerText = d;
         if (d === today) dayEl.classList.add("today");
-
         dayEl.onclick = () => {
             selectedDate = `${d} ${monthYearText.innerText}`;
             const dateTextEl = document.getElementById("selected-date-text");
@@ -113,373 +260,276 @@ function generateCalendar() {
     }
 }
 
-// 4. POPUP PENGUMUMAN DAN ANIMASINYA
 function saveReminder() {
     const text = reminderInput.value.trim();
-    if (text) {
-        const item = document.createElement("div");
-        item.className = "announcement-item";
-        
-        // Gunakan dataset agar data tersimpan aman saat dikloning untuk animasi
-        item.dataset.date = selectedDate;
-        item.dataset.text = text;
+    if (!text) return showToast("Teks tidak boleh kosong!", "error");
 
-        // Struktur HTML: Ikon Siaran memiliki fungsi onclick untuk detail
-        item.innerHTML = `
-            <div class="broadcast-icon" title="Lihat Detail">
-                <i class="fas fa-bullhorn"></i>
-            </div>
-            <strong style="font-size: 11px; color: #666;">${selectedDate}</strong>
-            <p>${text}</p>
-        `;
+    const item = document.createElement("div");
+    item.className = "announcement-item";
+    item.dataset.date = selectedDate;
+    item.dataset.text = text;
 
-        // Tambahkan event listener khusus pada ikon
-        const icon = item.querySelector('.broadcast-icon');
-        icon.onclick = (e) => {
-            e.stopPropagation(); // Mencegah bubbling
-            showAnnouncementDetail(selectedDate, text);
-        };
-        
-        const muted = announcementList.querySelector(".muted-note");
-        if (muted) muted.remove();
-        
-        // Cek wrapper animasi
-        const wrapper = announcementList.querySelector(".announcement-scroll-wrapper");
-        if (wrapper) {
-            wrapper.prepend(item);
-        } else {
-            announcementList.prepend(item);
-        }
+    item.innerHTML = `
+        <div class="note-content">
+            <small style="color:#888">${selectedDate}</small>
+            <p style="margin:5px 0; font-weight:500">${text}</p>
+        </div>
+        <div class="delete-announcement" onclick="deleteReminder(this)" style="color:#ff5252; cursor:pointer">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+    `;
 
-        reminderInput.value = "";
-        reminderModal.style.display = "none";
-        
-        updateAnnouncementAnimation();
-        showToast("Pengumuman ditambahkan!");
-    }
+    document.getElementById("announcement-list").prepend(item);
+    updateAnnouncementUI();
+
+    reminderInput.value = "";
+    closeAllModals(); 
+    showToast("Catatan ditambahkan!", "success");
 }
-        // 1. Fungsi Detail Popup
-function showAnnouncementDetail(date, text) {
-    const modal = document.getElementById("detailAnnouncementModal");
-    if (modal) {
-        document.getElementById("detail-date").innerText = "Tanggal: " + date;
-        document.getElementById("detail-text").innerText = text;
-        modal.style.display = "flex";
+
+function updateAnnouncementUI() {
+    const items = document.querySelectorAll("#announcement-list .announcement-item");
+    const count = items.length;
+    const countDisplay = document.getElementById("note-count");
+    const summaryBox = document.getElementById("announcement-summary-box");
+
+    if (countDisplay) countDisplay.innerText = count;
+
+    if (count > 0) {
+        if (summaryBox) summaryBox.classList.add("has-data");
+    } else {
+        if (summaryBox) summaryBox.classList.remove("has-data");
     }
 }
 
-// 2. Fungsi Animasi Berputar (Hanya aktif jika item > 2)
-function updateAnnouncementAnimation() {
-    const list = document.getElementById("announcement-list");
-    const items = list.querySelectorAll(".announcement-item:not(.clone)");
-    
-    if (items.length > 2) {
-        let wrapper = list.querySelector(".announcement-scroll-wrapper");
-        if (!wrapper) {
-            wrapper = document.createElement("div");
-            wrapper.className = "announcement-scroll-wrapper";
-            while (list.firstChild) wrapper.appendChild(list.firstChild);
-            list.appendChild(wrapper);
-        }
-        
-        const oldClones = wrapper.querySelectorAll(".clone");
-        oldClones.forEach(c => c.remove());
+function openNoteListModal() {
+    const modal = document.getElementById("noteListModal");
+    const displayArea = document.getElementById("full-note-list");
+    const dataRecords = document.querySelectorAll("#announcement-list .announcement-item");
 
-        items.forEach(item => {
+    displayArea.innerHTML = ""; 
+
+    if (dataRecords.length === 0) {
+        displayArea.innerHTML = `<div style="text-align:center; padding:40px; color:#999">
+            <i class="fas fa-folder-open" style="font-size:40px; margin-bottom:10px"></i>
+            <p>Belum ada catatan untuk saat ini.</p>
+        </div>`;
+    } else {
+        dataRecords.forEach(item => {
             const clone = item.cloneNode(true);
-            clone.classList.add("clone");
-            
-            // Pasang kembali event klik pada ikon di dalam kloning
-            const cloneIcon = clone.querySelector('.broadcast-icon');
-            cloneIcon.onclick = (e) => {
-                e.stopPropagation();
-                showAnnouncementDetail(item.dataset.date, item.dataset.text);
+            clone.querySelector('.delete-announcement').onclick = () => {
+                item.remove(); 
+                openNoteListModal(); 
+                updateAnnouncementUI(); 
             };
-            
-            wrapper.appendChild(clone);
+            displayArea.appendChild(clone);
         });
-
-        const speed = items.length * 6;
-        wrapper.style.animation = `scrollAnnouncements ${speed}s linear infinite`;
-
     }
-}
-document.getElementById("saveReminderBtn")?.addEventListener("click", saveReminder);
 
-// A. Fungsi untuk membuka detail pengumuman
-function showAnnouncementDetail(date, text) {
-    const modal = document.getElementById("detailAnnouncementModal");
-    if (modal) {
-        document.getElementById("detail-date").innerText = "Tanggal: " + date;
-        document.getElementById("detail-text").innerText = text;
-        modal.style.display = "flex";
-    }
+    modal.style.display = "flex";
 }
 
-// B. Fungsi untuk mengelola animasi berputar
-function updateAnnouncementAnimation() {
-    const list = document.getElementById("announcement-list");
-    // Ambil hanya item asli, bukan clone hasil animasi sebelumnya
-    const items = list.querySelectorAll(".announcement-item:not(.clone)");
+function closeNoteListModal() {
+    const modal = document.getElementById("noteListModal");
+    if (modal) modal.style.display = "none";
+}
+
+function deleteReminder(btn) {
+    if (confirm("Hapus catatan ini?")) {
+        btn.closest(".announcement-item").remove();
+        updateAnnouncementUI();
+        showToast("Catatan dihapus", "info");
+    }
+}
+
+/* ==========================================================================
+   BAGIAN 5: ABSENSI & JADWAL
+   ========================================================================== */
+
+function openCatatanModal() {
+    const modalCatatan = document.getElementById("catatanModal");
+    if (modalCatatan) {
+        modalCatatan.style.display = "flex";
+        const noteInput = document.getElementById("classNoteInput");
+        if (noteInput) { noteInput.value = ""; noteInput.focus(); }
+    }
+}
+
+document.getElementById("saveNoteButton")?.addEventListener("click", () => {
+    const noteInput = document.getElementById("classNoteInput");
+    if (noteInput && noteInput.value.trim()) {
+        catatanKelasHariIni = noteInput.value.trim();
+        showToast("Catatan harian disimpan!");
+        closeAllModals();
+    }
+});
+
+document.getElementById('simpanAbsenPengajar')?.addEventListener('click', function() {
+    const statusEl = document.getElementById('statusAbsenPengajar');
+    const jamDisplay = document.getElementById('jamAbsenDisplay');
+    if (statusEl && statusEl.value !== "" && jamDisplay) {
+        const sekarang = new Date();
+        jamDisplay.innerText = `${sekarang.getHours().toString().padStart(2, '0')}.${sekarang.getMinutes().toString().padStart(2, '0')} - Selesai`;
+    }
+});
+
+/**
+ * 1. LOGIKA DETAIL ROW (JADWAL KELAS)
+ */
+function toggleDetail(btn) {
+    const mainRow = (btn instanceof HTMLElement) ? btn.closest('tr') : btn;
+    const detailRow = mainRow.nextElementSibling;
     
-    if (items.length > 1) {
-        let wrapper = list.querySelector(".announcement-scroll-wrapper");
+    if (detailRow && detailRow.classList.contains('detail-row')) {
+        const isActive = detailRow.classList.toggle('active');
+        mainRow.classList.toggle('active-row');
         
-        if (!wrapper) {
-            wrapper = document.createElement("div");
-            wrapper.className = "announcement-scroll-wrapper";
-            while (list.firstChild) wrapper.appendChild(list.firstChild);
-            list.appendChild(wrapper);
+        // Mengatur tampilan baris detail
+        detailRow.style.display = isActive ? 'table-row' : 'none';
+        
+        // Mengubah ikon tombol detail
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = isActive ? 'fas fa-chevron-up' : 'fas fa-search';
         }
-        
-        // Bersihkan kloning lama agar tidak memenuhi memori
-        const oldClones = wrapper.querySelectorAll(".clone");
-        oldClones.forEach(c => c.remove());
-
-        // Buat kloning untuk efek putaran tanpa putus
-        items.forEach(item => {
-            const clone = item.cloneNode(true);
-            clone.classList.add("clone");
-            // Pasang ulang event klik pada elemen kloning
-            clone.onclick = () => showAnnouncementDetail(item.dataset.date, item.dataset.text);
-            wrapper.appendChild(clone);
-        });
-
-        // Tentukan durasi: 6 detik per item (makin banyak makin lambat/nyaman)
-        const duration = items.length * 6;
-        wrapper.style.animation = `scrollAnnouncements ${duration}s linear infinite`;
     }
 }
 
-// 5. TOAST NOTIFICATION (STANDAR)
+/**
+ * 2. LOGIKA SIMPAN MATERI (PROGRES BELAJAR)
+ */
+function handleSimpanDetail(btn, type) {
+    const container = btn.closest('.detail-col');
+    const inputElement = container.querySelector('input, textarea');
+    const value = inputElement.value.trim();
+
+    if (value === "") {
+        showToast(`Harap isi ${type} terlebih dahulu!`, "error");
+        inputElement.focus();
+        return;
+    }
+
+    if (type === 'Materi') {
+        showToast(`Materi "${value}" berhasil disimpan!`, "success");
+    }
+}
+
+/**
+ * 3. LOGIKA MODAL TUGAS (POPUP TUGAS)
+ */
+function openModalTugas() {
+    const modal = document.getElementById("modalTugas");
+    if (modal) {
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden"; // Kunci scroll layar utama
+    }
+}
+
+function closeModalTugas() {
+    const modal = document.getElementById("modalTugas");
+    if (modal) {
+        modal.style.display = "none";
+        document.body.style.overflow = ""; // Aktifkan kembali scroll
+    }
+}
+
+function handleKirimTugas() {
+    const desc = document.getElementById("modalTugasDesc").value.trim();
+    const link = document.getElementById("modalTugasLink").value.trim();
+    const fileInput = document.getElementById("modalTugasFile");
+    const file = fileInput ? fileInput.files[0] : null;
+
+    // Validasi: Deskripsi wajib diisi
+    if (desc === "") {
+        showToast("Instruksi tugas tidak boleh kosong!", "error");
+        document.getElementById("modalTugasDesc").focus();
+        return;
+    }
+
+    // Simulasi pengiriman data
+    console.log("Mengirim Tugas:", {
+        deskripsi: desc,
+        lampiran: link,
+        file: file ? file.name : "Tidak ada file"
+    });
+    
+    // Berikan feedback sukses
+    showToast("Tugas berhasil dikirim ke seluruh Santri!", "success");
+
+    // Reset input dan tutup modal
+    document.getElementById("modalTugasDesc").value = "";
+    document.getElementById("modalTugasLink").value = "";
+    if (fileInput) fileInput.value = ""; 
+    closeModalTugas();
+}
+
+/* ==========================================================================
+   BAGIAN 6: UTILS & INITIALIZATION
+   ========================================================================== */
+
+/**
+ * 1. SISTEM NOTIFIKASI (TOAST)
+ * Menampilkan pesan sukses atau error di bagian atas layar.
+ */
 function showToast(message, type = "success") {
     const toast = document.getElementById("toastNotification");
     if (!toast) return;
+    
     toast.textContent = message;
     toast.className = `toast show ${type}`;
-    setTimeout(() => { toast.className = "toast"; }, 3000);
-}
-
-// 6. HANDLING MODAL CATATAN HARIAN
-const btnTambahCatatan = document.querySelector(".btn-tambah-catatan");
-const modalCatatan = document.getElementById("catatanModal");
-const btnSaveNote = document.getElementById("saveNoteButton");
-const noteInput = document.getElementById("classNoteInput");
-
-// Fungsi buka modal
-function openCatatanModal() {
-    if (modalCatatan) {
-        modalCatatan.style.display = "flex";
-        noteInput.value = ""; 
-        noteInput.focus(); 
-    }
-}
-
-// Fungsi tutup modal
-function closeCatatanModal() {
-    if (modalCatatan) {
-        modalCatatan.style.display = "none";
-    }
-}
-
-// Listener Simpan Catatan
-btnSaveNote?.addEventListener("click", () => {
-    const materi = noteInput.value.trim();
-    if (materi) {
-        catatanKelasHariIni = materi;
-        
-        // Munculkan toast dulu
-        showToast("Catatan harian berhasil disimpan!", "success");
-        
-        // Tutup modal
-        closeCatatanModal();
-    } else {
-        showToast("Harap isi catatan materi terlebih dahulu!", "error");
-    }
-});
-
-/* ==========================================================================
-   BAGIAN 3: JADWAL & ABSENSI LOGIC
-   ========================================================================== */
-
-// 1. JADWAL EXPANDABLE
-function toggleDetail(row) {
-    const detailRow = row.nextElementSibling;
-    const isActive = detailRow.classList.contains('active');
-    document.querySelectorAll('.detail-row').forEach(r => r.classList.remove('active'));
-    if (!isActive) {
-        detailRow.classList.add('active');
-        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-}
-window.toggleDetail = toggleDetail;
-
-// 2. FILE UPLOAD HANDLING
-function handleFileUpload(input, containerId) {
-    const container = document.getElementById(containerId);
-    if (input.files && input.files[0]) {
-        container.querySelector('.input-wrapper').style.display = 'none';
-        container.querySelector('.file-preview').style.display = 'flex';
-        container.querySelector('.file-name').innerText = input.files[0].name;
-        showToast("File dipilih: " + input.files[0].name, "info");
-    }
-}
-window.handleFileUpload = handleFileUpload;
-
-function resetInput(containerId) {
-    const container = document.getElementById(containerId);
-    container.querySelector('.hidden-file-input').value = "";
-    container.querySelector('.input-wrapper').style.display = 'flex';
-    container.querySelector('.file-preview').style.display = 'none';
-}
-window.resetInput = resetInput;
-
-// 3. FUNGSI UPDATE JAM ABSEN PENGAJAR
-document.getElementById('simpanAbsenPengajar')?.addEventListener('click', function() {
-    // SINKRONISASI ID: Sesuaikan dengan statusAbsenPengajar di HTML
-    const statusEl = document.getElementById('statusAbsenPengajar');
-    const jamDisplay = document.getElementById('jamAbsenDisplay');
     
-    if (statusEl && statusEl.value !== "" && jamDisplay) {
-        const sekarang = new Date();
-        const jam = sekarang.getHours().toString().padStart(2, '0');
-        const menit = sekarang.getMinutes().toString().padStart(2, '0');
-        const waktuSelesai = new Date(sekarang.getTime() + 30 * 60000);
-        
-        jamDisplay.innerText = `${jam}.${menit} - ${waktuSelesai.getHours().toString().padStart(2, '0')}.${waktuSelesai.getMinutes().toString().padStart(2, '0')}`;
-    }
-});
-
-// 4. LOGIKA TOAST STACKABLE (POJOK KANAN ATAS)
-function showStackableToast(nama, status) {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-
-    const toast = document.createElement('div');
-    toast.className = 'custom-toast';
-    
-    // Tentukan warna spesifik untuk tiap status
-    let color = "#275238"; // Default Hijau (Hadir)
-    
-    if (status === "Izin") {
-        color = "#dbc08d"; // Gold/Kuning untuk Izin
-    } else if (status === "Sakit") {
-        color = "#ff9800"; // Oranye untuk Sakit (Biar beda dengan Izin)
-    } else if (status === "Tidak Hadir" || status === "Alfa") {
-        color = "#d32f2f"; // Merah untuk Tanpa Keterangan
-    } else if (status === "Mustamiah") {
-        color = "#3498db"; // Biru untuk Mustamiah
-    }
-
-    toast.style.borderLeftColor = color;
-    toast.innerHTML = `
-        <div class="toast-content">
-            <span class="toast-title" style="color: ${color}">Status Diperbarui</span>
-            <span class="toast-body"><strong>${nama}</strong>: ${status}</span>
-        </div>
-        <div class="toast-progress" style="background: ${color}"></div>
-    `;
-
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(20px)';
-        toast.style.transition = '0.3s ease';
-        setTimeout(() => toast.remove(), 300);
+    // Menghilangkan toast secara otomatis setelah 3 detik
+    setTimeout(() => { 
+        toast.className = "toast"; 
     }, 3000);
 }
 
-// 5. DETEKSI PERUBAHAN STATUS SANTRI (LANGSUNG TOAST)
-document.getElementById('absensiSantriBody')?.addEventListener('change', function(e) {
-    if (e.target.classList.contains('select-status-santri')) {
-        const row = e.target.closest('tr');
-        const namaSantri = row.cells[1].innerText;
-        const statusBaru = e.target.value;
-
-        showStackableToast(namaSantri, statusBaru);
-    }
-});
-
-// 6. RIWAYAT ABSENSI
-document.getElementById("btnViewRiwayat")?.addEventListener("click", () => {
-    const absensiRows = document.querySelectorAll("#absensiBody tr");
-    const riwayatBody = document.getElementById("riwayatBody");
-    const tglInput = document.getElementById("tanggalAbsensiPengajar").value;
-
-    if (absensiRows.length > 0 && riwayatBody) {
-        riwayatBody.innerHTML = "";
-        let countHadir = 0;
-        let countIzin = 0;
-
-        absensiRows.forEach((row, index) => {
-            const nama = row.cells[1].innerText;
-            const status = row.querySelector(".table-select").value;
-            const catatan = row.querySelector(".table-input").value || "-";
-            
-            if (status === "Hadir") countHadir++;
-            if (status === "Izin" || status === "Sakit") countIzin++;
-
-            let badgeClass = status === "Hadir" ? "badge-hadir" : (status === "Tidak Hadir" || status === "Alfa" ? "badge-tidak" : "badge-izin");
-
-            riwayatBody.innerHTML += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td><strong>${nama}</strong></td>
-                    <td>${tglInput}</td>
-                    <td><span class="badge ${badgeClass}">${status}</span></td>
-                    <td>${catatan}</td>
-                    <td>${catatanKelasHariIni || "Belum ada materi"}</td>
-                </tr>`;
-        });
-
-        if(document.getElementById("statTotalHadir")) document.getElementById("statTotalHadir").innerText = countHadir;
-        if(document.getElementById("statTotalIzin")) document.getElementById("statTotalIzin").innerText = countIzin;
-
-        sections.forEach(s => { s.classList.remove("active"); s.style.display = "none"; });
-        const target = document.getElementById("riwayat-kehadiran-content");
-        target.classList.add("active");
-        target.style.display = "block";
-        mainTitle.textContent = "Riwayat Kehadiran";
-    } else {
-        showToast("Belum ada data untuk ditampilkan", "error");
-    }
-});
-
-document.getElementById("btnKembali")?.addEventListener("click", () => {
-    sections.forEach(s => { s.classList.remove("active"); s.style.display = "none"; });
-    const target = document.getElementById("absensi-content");
-    target.classList.add("active");
-    target.style.display = "block";
-    mainTitle.textContent = "Absensi";
-});
-
-// 7. TOMBOL SIMPAN ABSENSI (SEKARANG LANGSUNG SELESAI TANPA POPUP)
-document.getElementById("btnSimpanAbsensi")?.addEventListener("click", () => {
-    showToast("Seluruh data absensi berhasil disimpan ke sistem!", "success");
-});
-
-/* ==========================================================================
-   BAGIAN 4: INITIAL EXECUTION
-   ========================================================================== */
-generateCalendar();
-
-async function handleMenuLoad(targetId) {
-    if (targetId === "dashboard-content") generateCalendar();
-    if (targetId === "absensi-content") {
-        const tglInput = document.getElementById("tanggalAbsensiPengajar");
-        if (tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split("T")[0];
-    }
-}
-
-async function handleMenuLoad(targetId) {
+/**
+ * 2. HANDLING MENU LOAD
+ * Mengatur aksi khusus saat berpindah antar menu sidebar.
+ */
+function handleMenuLoad(targetId) {
+    // Jika pindah ke dashboard, gambar ulang kalender
     if (targetId === "dashboard-content") {
-        generateCalendar();
-        // Pastikan animasi dihitung ulang saat pindah menu kembali ke dashboard
-        setTimeout(updateAnnouncementAnimation, 100); 
+        if (typeof generateCalendar === "function") generateCalendar();
     }
+    
+    // Jika pindah ke absensi, pasang tanggal hari ini secara otomatis
     if (targetId === "absensi-content") {
         const tglInput = document.getElementById("tanggalAbsensiPengajar");
-        if (tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split("T")[0];
+        if (tglInput && !tglInput.value) {
+            tglInput.value = new Date().toISOString().split("T")[0];
+        }
     }
 }
+
+/**
+ * 3. EKSEKUSI FUNGSI AWAL (RUN ON LOAD)
+ * Fungsi-fungsi yang dijalankan pertama kali saat halaman dibuka.
+ */
+// Render kalender di dashboard
+if (typeof generateCalendar === "function") generateCalendar();
+
+// Update angka jumlah catatan di dashboard
+if (typeof updateAnnouncementUI === "function") updateAnnouncementUI();
+
+// Manual binding untuk tombol Simpan Pengumuman di Kalender
+const saveBtn = document.getElementById("saveReminderBtn");
+if (saveBtn) {
+    saveBtn.onclick = saveReminder;
+}
+
+/**
+ * 4. GLOBAL CLICK LISTENER (OVERLAY HANDLING)
+ * Menangani penutupan modal tugas jika pengguna mengklik area di luar kotak modal.
+ */
+const originalWindowOnClick = window.onclick;
+window.onclick = (event) => {
+    // Tetap jalankan logika klik yang sudah ada (untuk profil/mini card)
+    if (originalWindowOnClick) originalWindowOnClick(event);
+    
+    // Logika tambahan khusus untuk menutup Modal Tugas
+    if (event.target.id === "modalTugas") {
+        if (typeof closeModalTugas === "function") closeModalTugas();
+    }
+};

@@ -49,21 +49,44 @@
     </ul>
 </nav>
             <div class="sidebar-footer">
-        <ul>
-            <li><i class="fas fa-cog"></i> Pengaturan</li>
-            <li class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</li>
-        </ul>
-    </div>
+    <ul>
+        <li onclick="openProfil()" style="cursor: pointer;">
+            <i class="fas fa-user-cog"></i>
+            <span>Profil Pengajar</span>
+        </li>
+
+        <li class="logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Keluar</span>
+        </li>
+    </ul>
+</div>
 </aside>
 
         <main class="main-content">
             <header>
-                <h1>Dashboard</h1>
-                <div class="user-profile">
-                    <span>Pengajar</span>
-                    <i class="fas fa-user-circle"></i>
-                </div>
-            </header>
+    <h1>Dashboard</h1>
+    <div class="user-profile-wrapper">
+        <div class="user-profile" onclick="toggleMiniProfil()" style="cursor: pointer;">
+            <span id="header-user-name">Pengajar</span>
+            <div id="header-initials" style="background: var(--primary-green); color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-left: 10px; font-size: 14px; flex-shrink: 0;">
+    P
+</div>
+
+        <div id="miniProfilCard" class="mini-profil-card">
+            <div class="mini-card-content">
+                <div class="mini-avatar" id="mini-avatar-initials">P</div>
+                <h3 id="mini-nama">Nama Pengajar</h3>
+                <p id="mini-email"><i class="fas fa-envelope"></i> email@example.com</p>
+                <p id="mini-phone"><i class="fab fa-whatsapp"></i> 08xxxxxxxxxx</p>
+                <hr>
+                <button onclick="openProfil(); toggleMiniProfil()" class="btn-edit-profil">
+                    <i class="fas fa-user-edit"></i> Pengaturan Profil
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
 
 <section id="dashboard-content" class="content-section active">
     <div class="dashboard-layout">
@@ -122,24 +145,45 @@
                     </table>
                 </div>
             </div>
-        </div> <div class="right-column">
-            <div class="card calendar-card">
-                <h3 id="calendar-month-year"></h3>
-                <div id="calendar-days" class="calendar-days">
-                    </div>
-            </div>
-
-            <div class="card announcement-card">
-                <div class="icon-announcement">
-                    <i class="fas fa-bullhorn"></i>
-                </div>
-                <h3>Pengumuman</h3>
-                <div id="announcement-list">
-                    <p class="muted-note">Klik tanggal untuk tambah catatan.</p>
-                </div>
-            </div>
         </div> 
-    </div> 
+<div class="right-column">
+    <div class="card calendar-card">
+        <h3 id="calendar-month-year"></h3>
+        <div id="calendar-days" class="calendar-days"></div>
+    </div>
+
+    <div class="card announcement-card">
+        <div class="announcement-summary-wrapper">
+            <div class="announcement-header-info">
+                <i class="fas fa-bullhorn main-broadcast-icon"></i>
+                <span class="main-announcement-text">Pengumuman & Reminder</span>
+            </div>
+            <p class="instruction-text" style="font-size: 11px; color: #888; margin-bottom: 10px;">Klik tanggal untuk tambah catatan.</p>
+            
+            <div id="announcement-summary-box" class="summary-box">
+                <span class="count-text">Terdapat <strong id="note-count">0</strong> catatan aktif</span>
+                <button class="btn-show-list" onclick="openNoteListModal()">
+                    Lihat Semua Catatan <i class="fas fa-external-link-alt"></i>
+                </button>
+            </div>
+        </div>
+        <div id="announcement-list" style="display: none;"></div>
+    </div>
+</div>
+
+<div id="noteListModal" class="modal">
+    <div class="modal-content note-list-modal">
+        <span class="close-button" onclick="closeNoteListModal()">&times;</span>
+        <div class="modal-header">
+            <h3><i class="fas fa-list-ul"></i> Daftar Semua Catatan</h3>
+            <p>Kelola semua pengumuman dan reminder Anda di sini.</p>
+        </div>
+        <hr>
+        <div id="full-note-list" class="full-note-scroll-area">
+            </div>
+    </div>
+</div>
+
     <div id="reminderModal" class="modal">
     <div class="modal-content">
         <span class="close-button">&times;</span>
@@ -161,9 +205,91 @@
         </div>
     </div>
 </div>
+<div id="profilOverlay" class="modal-overlay">
+    <div class="modal-profil">
+        
+        <div class="modal-left">
+            <div class="profile-avatar-section">
+                <div class="image-circle" id="profile-avatar-container">
+                    <span id="profile-initials">P</span>
+                </div>
+                <p style="font-size: 13px; color: #888; margin-top: 10px;">Inisial Pengajar</p>
+            </div>
+
+            <div class="modal-footer-left">
+                <button type="button" class="btn-primary" onclick="handleSimpanPerubahan()">
+                    Simpan Perubahan
+                </button>
+                <button type="button" class="btn-batal" onclick="closeAllModals()">
+                    Batal
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-right">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="input-nama" placeholder="Masukkan Nama Lengkap" oninput="updateInitials()">
+                </div>
+                
+                <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="input-email" placeholder="ahmad@email.com">
+</div>
+
+<div class="form-group">
+    <label>Nomor WhatsApp</label>
+    <input type="text" id="input-wa" placeholder="08xxxxxxxxxx">
+</div>
+
+                <div class="form-group">
+                    <label>Jenis Kelamin</label>
+                    <select>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+
+                <div class="password-section">
+    <button type="button" id="btnTogglePw" class="toggle-password" onclick="togglePasswordFields()">
+        Ubah Password
+    </button>
+
+    <div id="passwordFields" class="password-fields" style="display: none; flex-direction: column; gap: 15px; margin-top: 15px;">
+        <div class="form-group">
+            <label>Password Lama</label>
+            <div class="password-input-container">
+                <input type="password" id="pw-lama" placeholder="******">
+                <i class="fas fa-eye-slash toggle-eye" onclick="toggleVisibility('pw-lama', this)"></i>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Password Baru</label>
+            <div class="password-input-container">
+                <input type="password" id="pw-baru" placeholder="******" oninput="validatePassword()">
+                <i class="fas fa-eye-slash toggle-eye" onclick="toggleVisibility('pw-baru', this)"></i>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Konfirmasi Password</label>
+            <div class="password-input-container">
+                <input type="password" id="pw-konfirmasi" placeholder="******" oninput="validatePassword()">
+                <i class="fas fa-eye-slash toggle-eye" onclick="toggleVisibility('pw-konfirmasi', this)"></i>
+            </div>
+            <small id="password-error" class="error-text" style="color: #ff5252; margin-top: 10px; display: none;">
+    Password tidak cocok!
+</small>
+        </div>
+    </div>
+</div>
+
+</div>
+        </div> 
+    </div>
+</div>
 
 <div id="toastNotification" class="toast"></div>
-</section> </main> </div> <script src="pengajar.js"></script>
-</body> 
-<body class="no-scroll">
-
+<script src="pengajar.js"></script>

@@ -72,25 +72,25 @@
                     <div class="absensi-header-row">
                         <h2>Absensi Santri</h2>
                         <button class="btn-tambah-catatan" onclick="openCatatanModal()">
-                            Tambah Catatan Materi
+                            <i class="fas fa-plus-circle"></i> Tambah Catatan Kelas
                         </button>
                     </div>
 
                     <div class="filter-absen-row">
                         <div class="filter-group">
                             <label>Pengajar:</label>
-                            <input type="text" value="Pengajar" readonly class="input-readonly">
+                            <input type="text" value="Junet" readonly class="input-readonly">
                         </div>
                         <div class="filter-group">
                             <label>Pilih Kelas:</label>
                             <select id="pilihKelasAbsen">
-                                <option value="Tazwid">Tazwid</option>
+                                <option value="Tajwid">Tajwid</option>
                                 <option value="Usmani 1">Usmani 1</option>
                             </select>
                         </div>
                         <div class="filter-group">
                             <label>Tanggal:</label>
-                            <input type="date" id="tanggalAbsen" value="2025-12-23">
+                            <input type="date" id="tanggalAbsensiPengajar">
                         </div>
                     </div>
 
@@ -98,6 +98,7 @@
                         <div class="absen-pengajar-input">
                             <label>Absen Pengajar Hari Ini:</label>
                             <select id="statusAbsenPengajar">
+                                <option value="" disabled selected>- Status Anda -</option>
                                 <option value="Hadir">Hadir</option>
                                 <option value="Izin">Izin</option>
                                 <option value="Sakit">Sakit</option>
@@ -108,40 +109,43 @@
 
                     <div class="label-jam-absen">
                         <span class="badge-hari">Absen Hari Ini</span>
-                        <span class="jam-val" id="jamAbsenDisplay">00.00 - 00.00</span>
+                        <span class="jam-val" id="jamAbsenDisplay">--.-- - --.--</span>
                     </div>
 
-                            <table class="table-absensi-santri">
-    <thead>
-        <tr>
-            <th>NO</th>
-            <th>NAMA SANTRI</th>
-            <th>NIS</th>
-            <th>STATUS KEHADIRAN</th>
-        </tr>
-    </thead>
-    <tbody id="absensiSantriBody">
-        <tr>
-            <td>1</td>
-            <td><strong>Ahmad Fauzi</strong></td>
-            <td class="nis-column">2025001</td>
-            <td>
-                <select class="select-status-santri">
-                    <option value="" disabled selected>- Pilih Status -</option>
-                    <option value="Hadir">Hadir</option>
-                    <option value="Izin">Izin</option>
-                    <option value="Sakit">Sakit</option>
-                    <option value="Alfa">Alfa</option>
-                </select>
-            </td>
-        </tr>
-    </tbody>
-</table>
-                   <div class="absensi-footer">
-    <a href="riwayat-absensi.html" class="btn-view-riwayat" style="text-decoration: none; display: inline-block;">
-        <i class="fas fa-history"></i> Lihat Riwayat Absensi
-    </a>
-</div>
+                    <div class="table-wrapper">
+                        <table class="table-absensi-santri">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>NAMA SANTRI</th>
+                                    <th>NIS</th>
+                                    <th>STATUS KEHADIRAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="absensiSantriBody">
+                                <tr>
+                                    <td>1</td>
+                                    <td><strong>Ahmad Fauzi</strong></td>
+                                    <td class="nis-column">2025001</td>
+                                    <td>
+                                        <select class="select-status-santri">
+                                            <option value="" disabled selected>- Pilih Status -</option>
+                                            <option value="Hadir">Hadir</option>
+                                            <option value="Izin">Izin</option>
+                                            <option value="Sakit">Sakit</option>
+                                            <option value="Alfa">Alfa</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <div class="absensi-footer">
+                        <a href="riwayat-absensi.html" class="btn-view-riwayat">
+                            <i class="fas fa-history"></i> Lihat Riwayat Absensi
+                        </a>
+                    </div>
                 </div>
             </section>
         </main>
@@ -150,8 +154,8 @@
     <div id="catatanModal" class="modal modal-materi">
         <div class="modal-content">
             <span class="close-button" onclick="closeCatatanModal()">&times;</span>
-            <h3 id="modalTitle">Tambah Catatan Materi</h3> 
-            <textarea id="classNoteInput" placeholder="Masukkan detail di sini..."></textarea>
+            <h3 id="modalTitle">Tambah Catatan Kelas</h3> 
+            <textarea id="classNoteInput" placeholder="Masukkan detail materi, kendala, atau pencapaian kelas hari ini..."></textarea>
             <div class="modal-footer">
                 <button class="btn-batal" onclick="closeCatatanModal()">Batal</button>
                 <button class="btn-simpan" id="saveNoteButton">Simpan</button>
