@@ -374,103 +374,65 @@ document.getElementById('simpanAbsenPengajar')?.addEventListener('click', functi
 });
 
 /**
- * 1. LOGIKA DETAIL ROW (JADWAL KELAS)
- */
-function toggleDetail(btn) {
-    const mainRow = (btn instanceof HTMLElement) ? btn.closest('tr') : btn;
-    const detailRow = mainRow.nextElementSibling;
-    
-    if (detailRow && detailRow.classList.contains('detail-row')) {
-        const isActive = detailRow.classList.toggle('active');
-        mainRow.classList.toggle('active-row');
-        
-        // Mengatur tampilan baris detail
-        detailRow.style.display = isActive ? 'table-row' : 'none';
-        
-        // Mengubah ikon tombol detail
-        const icon = btn.querySelector('i');
-        if (icon) {
-            icon.className = isActive ? 'fas fa-chevron-up' : 'fas fa-search';
-        }
-    }
-}
-
-/**
- * 2. LOGIKA SIMPAN MATERI (PROGRES BELAJAR)
- */
-function handleSimpanDetail(btn, type) {
-    const container = btn.closest('.detail-col');
-    const inputElement = container.querySelector('input, textarea');
-    const value = inputElement.value.trim();
-
-    if (value === "") {
-        showToast(`Harap isi ${type} terlebih dahulu!`, "error");
-        inputElement.focus();
-        return;
-    }
-
-    if (type === 'Materi') {
-        showToast(`Materi "${value}" berhasil disimpan!`, "success");
-    }
-}
-
-/**
  * 3. LOGIKA MODAL TUGAS (POPUP TUGAS)
  */
+// Fungsi untuk membuka Modal Buat Tugas
 function openModalTugas() {
     const modal = document.getElementById("modalTugas");
-    if (modal) {
-        modal.style.display = "flex";
-        document.body.style.overflow = "hidden"; // Kunci scroll layar utama
-    }
+    modal.style.display = "flex";
+    // Tambahkan class agar body tidak bisa di-scroll saat modal buka (opsional)
+    document.body.style.overflow = "hidden";
 }
 
+// Fungsi untuk menutup Modal Buat Tugas
 function closeModalTugas() {
     const modal = document.getElementById("modalTugas");
-    if (modal) {
-        modal.style.display = "none";
-        document.body.style.overflow = ""; // Aktifkan kembali scroll
-    }
+    modal.style.display = "none";
+    // Kembalikan scroll body
+    document.body.style.overflow = "auto";
 }
 
+// Fungsi untuk menangani pengiriman tugas
 function handleKirimTugas() {
-    const desc = document.getElementById("modalTugasDesc").value.trim();
-    const link = document.getElementById("modalTugasLink").value.trim();
-    const fileInput = document.getElementById("modalTugasFile");
-    const file = fileInput ? fileInput.files[0] : null;
+    const deskripsi = document.getElementById("modalTugasDesc").value;
+    const link = document.getElementById("modalTugasLink").value;
+    const file = document.getElementById("modalTugasFile").files[0];
 
-    // Validasi: Deskripsi wajib diisi
-    if (desc === "") {
-        showToast("Instruksi tugas tidak boleh kosong!", "error");
-        document.getElementById("modalTugasDesc").focus();
+    // Validasi sederhana: Deskripsi wajib diisi sesuai aturan bisnis
+    if (!deskripsi.trim()) {
+        alert("Mohon isi deskripsi atau instruksi tugas terlebih dahulu.");
         return;
     }
 
-    // Simulasi pengiriman data
-    console.log("Mengirim Tugas:", {
-        deskripsi: desc,
-        lampiran: link,
-        file: file ? file.name : "Tidak ada file"
-    });
+    // Simulasi proses simpan
+    console.log("Mengirim Tugas...", { deskripsi, link, file });
     
-    // Berikan feedback sukses
-    showToast("Tugas berhasil dikirim ke seluruh Santri!", "success");
+    // Tampilkan notifikasi sukses (jika ada fungsi toast)
+    if (typeof showToast === "function") {
+        showToast("Tugas berhasil dikirim ke kelas!");
+    } else {
+        alert("Tugas berhasil dikirim ke kelas!");
+    }
 
-    // Reset input dan tutup modal
+    // Tutup modal dan reset form
+    closeModalTugas();
     document.getElementById("modalTugasDesc").value = "";
     document.getElementById("modalTugasLink").value = "";
-    if (fileInput) fileInput.value = ""; 
-    closeModalTugas();
+    document.getElementById("modalTugasFile").value = "";
+}
+
+// Menutup modal secara otomatis jika pengguna mengklik area di luar kotak modal
+window.onclick = function(event) {
+    const modal = document.getElementById("modalTugas");
+    if (event.target == modal) {
+        closeModalTugas();
+    }
 }
 
 /* ==========================================================================
    BAGIAN 6: UTILS & INITIALIZATION
    ========================================================================== */
 
-/**
- * 1. SISTEM NOTIFIKASI (TOAST)
- * Menampilkan pesan sukses atau error di bagian atas layar.
- */
 function showToast(message, type = "success") {
     const toast = document.getElementById("toastNotification");
     if (!toast) return;
@@ -478,23 +440,16 @@ function showToast(message, type = "success") {
     toast.textContent = message;
     toast.className = `toast show ${type}`;
     
-    // Menghilangkan toast secara otomatis setelah 3 detik
     setTimeout(() => { 
         toast.className = "toast"; 
     }, 3000);
 }
 
-/**
- * 2. HANDLING MENU LOAD
- * Mengatur aksi khusus saat berpindah antar menu sidebar.
- */
 function handleMenuLoad(targetId) {
-    // Jika pindah ke dashboard, gambar ulang kalender
     if (targetId === "dashboard-content") {
         if (typeof generateCalendar === "function") generateCalendar();
     }
     
-    // Jika pindah ke absensi, pasang tanggal hari ini secara otomatis
     if (targetId === "absensi-content") {
         const tglInput = document.getElementById("tanggalAbsensiPengajar");
         if (tglInput && !tglInput.value) {
@@ -503,33 +458,38 @@ function handleMenuLoad(targetId) {
     }
 }
 
-/**
- * 3. EKSEKUSI FUNGSI AWAL (RUN ON LOAD)
- * Fungsi-fungsi yang dijalankan pertama kali saat halaman dibuka.
- */
-// Render kalender di dashboard
-if (typeof generateCalendar === "function") generateCalendar();
+// FUNGSI TANGGAL OTOMATIS
+function updateTanggal() {
+    const opsi = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    const hariIni = new Date().toLocaleDateString('id-ID', opsi);
+    const elemenTanggal = document.getElementById('tanggal-otomatis');
+    
+    if (elemenTanggal) {
+        elemenTanggal.innerHTML = hariIni;
+    }
+}
 
-// Update angka jumlah catatan di dashboard
+// --- EKSEKUSI SAAT HALAMAN DIMUAT ---
+updateTanggal(); // Jalankan tanggal otomatis
+if (typeof generateCalendar === "function") generateCalendar();
 if (typeof updateAnnouncementUI === "function") updateAnnouncementUI();
 
-// Manual binding untuk tombol Simpan Pengumuman di Kalender
 const saveBtn = document.getElementById("saveReminderBtn");
 if (saveBtn) {
     saveBtn.onclick = saveReminder;
 }
 
-/**
- * 4. GLOBAL CLICK LISTENER (OVERLAY HANDLING)
- * Menangani penutupan modal tugas jika pengguna mengklik area di luar kotak modal.
- */
+// HANDLING CLICK LUAR MODAL
 const originalWindowOnClick = window.onclick;
 window.onclick = (event) => {
-    // Tetap jalankan logika klik yang sudah ada (untuk profil/mini card)
     if (originalWindowOnClick) originalWindowOnClick(event);
     
-    // Logika tambahan khusus untuk menutup Modal Tugas
     if (event.target.id === "modalTugas") {
-        if (typeof closeModalTugas === "function") closeModalTugas();
+        closeModalTugas();
     }
 };

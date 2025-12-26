@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Kelas - Sahabat Quran</title>
-    
+    <title>Jadwal Kelas Saya - Sahabat Quran</title>
     <link rel="stylesheet" href="pengajar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,28 +26,28 @@
             </nav>
             <div class="sidebar-footer">
                 <ul>
-                    <li><i class="fas fa-cog"></i> Pengaturan</li>
-                    <li class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</li>
+                    <li><i class="fas fa-user-cog"></i> <span>Profil Pengajar</span></li>
+                    <li class="logout"><i class="fas fa-sign-out-alt"></i> <span>Keluar</span></li>
                 </ul>
             </div>
         </aside>
 
         <main class="main-content">
-            <header>
-                <h1>Jadwal Kelas</h1>
+            <header class="top-header">
+                <h1 class="page-title">Jadwal Kelas Saya</h1>
                 <div class="user-profile">
-                    <span>Pengajar</span>
-                    <i class="fas fa-user-circle"></i>
+                    <span id="tanggal-otomatis" class="date-display-box"></span>
                 </div>
             </header>
 
-            <div class="jadwal-page-container">
+            <section class="jadwal-page-container">
                 <div class="card filter-card">
                     <div class="filter-group">
                         <label>Pilih Kelas:</label>
-                        <select name="pilih-kelas">
+                        <select name="pilih-kelas" class="custom-select-minimal">
+                            <option value="Semua">Semua Kelas</option>
                             <option value="Usmani 1">Usmani 1</option>
-                            <option value="Usmani 2">Usmani 2</option>
+                            <option value="Tajwid A">Tajwid A</option>
                         </select>
                     </div>
                     <button class="btn-export">
@@ -56,104 +55,42 @@
                     </button>
                 </div>
 
-                <div class="card table-full-card">
-                    <h3>Jadwal Lengkap</h3>
-                    <table class="table-lengkap">
+                <div class="table-container">
+                    <table class="table-jadwal-clean">
                         <thead>
                             <tr>
-                                <th>HARI</th>
-                                <th>WAKTU</th>
-                                <th>KELAS</th>
-                                <th>KATEGORI</th>
-                                <th>PENGAJAR</th>
-                                <th>AKSI</th>
+                                <th style="text-align: left; padding-left: 20px;">Kelas</th>
+                                <th>Hari</th>
+                                <th>Tanggal</th> <th>Waktu</th>
+                                <th>Durasi</th>
+                                <th>Kategori</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="main-row">
+                            <tr>
+                                <td style="text-align: left; padding-left: 20px;"><strong>Usmani 1</strong></td>
                                 <td>Senin</td>
-                                <td>08.00 - 10.00</td>
-                                <td>Usmani 1</td>
-                                <td>Dewasa</td>
-                                <td>Junet</td>
-                                <td>
-                                    <button class="btn-detail" onclick="toggleDetail(this)">
-                                        <i class="fas fa-search"></i> Detail
-                                    </button>
+                                <td>26/12/2025</td>
+                                <td><span class="time-tag">08:00 - 09:30</span></td>
+                                <td>90 Menit</td>
+                                <td><span class="badge-category">Dewasa</span>
                                 </td>
                             </tr>
-                            
-                            <tr class="detail-row">
-                                <td colspan="6">
-                                    <div class="detail-container">
-                                        <div class="detail-col">
-                                            <i class="fas fa-chart-line icon-header"></i>
-                                            <h4>Progres Belajar</h4>
-                                            <p class="sub-text">Materi terakhir yang diajarkan</p>
-                                            <input type="text" id="inputMateri-Usmani1" placeholder="Contoh: Hal 15 / Al-Baqarah 1-5" class="input-detail">
-                                            <button class="btn-save-small" onclick="handleSimpanDetail(this, 'Materi')">Simpan Materi</button>
-                                        </div>
-
-                                        <div class="detail-col highlight-col">
-                                            <i class="fas fa-user-check icon-header"></i>
-                                            <h4>Status Kehadiran</h4>
-                                            <p class="sub-text">Ringkasan kehadiran hari ini</p>
-                                            <div class="attendance-summary">
-                                                <span class="count" id="count-Usmani1">0/0</span>
-                                                <span class="label">Santri Hadir</span>
-                                            </div>
-                                            <a href="absensi-pengajar.html" class="btn-link-absensi">Buka Presensi <i class="fas fa-external-link-alt"></i></a>
-                                        </div>
-
-                                        <div class="detail-col">
-                                            <i class="fas fa-tasks icon-header"></i>
-                                            <h4>Instruksi Tugas</h4>
-                                            <p class="sub-text">Kelola tugas untuk kelas ini</p>
-                                            <button class="btn-add-task" onclick="openModalTugas('Usmani 1')">
-                                                <i class="fas fa-plus-circle"></i> Tambahkan Tugas
-                                            </button>
-                                        </div>
-                                    </div>
+                            <tr>
+                                <td style="text-align: left; padding-left: 20px;"><strong>Tajwid A</strong></td>
+                                <td>Rabu</td>
+                                <td>28/12/2025</td>
+                                <td><span class="time-tag">10:00 - 11:30</span></td>
+                                <td>90 Menit</td>
+                                <td><span class="badge-category child">Anak-anak</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </section>
         </main>
     </div>
-
-    <div id="modalTugas" class="modal">
-        <div class="modal-content task-modal">
-            <span class="close-button" onclick="closeModalTugas()">&times;</span>
-            <h3><i class="fas fa-edit"></i> Buat Instruksi Tugas</h3>
-            <p class="modal-subtitle">Isi detail tugas yang akan dikirimkan ke aplikasi santri.</p>
-            
-            <div class="form-group task-field">
-                <label><i class="fas fa-align-left"></i> Deskripsi / Instruksi</label>
-                <textarea id="modalTugasDesc" class="textarea-detail" placeholder="Tulis instruksi tugas di sini (misal: Hafalan An-Naba)..."></textarea>
-            </div>
-            
-            <div class="form-group task-field">
-                <label><i class="fas fa-link"></i> Link Lampiran (Opsional)</label>
-                <input type="text" id="modalTugasLink" class="input-detail" placeholder="https://link-materi-atau-video.com">
-            </div>
-
-            <div class="form-group task-field">
-                <label><i class="fas fa-file-pdf"></i> Upload Dokumen (Opsional)</label>
-                <div class="file-input-wrapper">
-                    <input type="file" id="modalTugasFile">
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-batal" onclick="closeModalTugas()">Batal</button>
-                <button class="btn-simpan" onclick="handleKirimTugas()">Kirim ke Kelas</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toastNotification" class="toast"></div>
 
     <script src="pengajar.js"></script>
 </body>

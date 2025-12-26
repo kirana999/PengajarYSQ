@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pengajar - Sahabat Quran</title>
+    <link rel="stylesheet" href="pengajar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logoYSQ.png" alt="Logo Sahabat Quran">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-pengajar.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="jadwal-kelas-pengajar.html" class="nav-link"><i class="fas fa-calendar-alt"></i> <span>Jadwal Kelas</span></a></li>
+                    <li><a href="absensi-pengajar.html" class="nav-link"><i class="fas fa-check-square"></i> <span>Absensi</span></a></li>
+                    <li class="active"><a href="materi-ajar.html" class="nav-link"><i class="fas fa-book"></i> <span>Materi Ajar</span></a></li>
+                    <li><a href="rapor-santri.html" class="nav-link"><i class="fas fa-file-alt"></i> <span>Rapor</span></a></li>
+                    <li><a href="laporan-pengajar.html" class="nav-link"><i class="fas fa-chart-bar"></i> <span>Laporan</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <ul>
+                    <li onclick="openProfil()" style="cursor: pointer;"><i class="fas fa-user-cog"></i> <span>Profil Pengajar</span></li>
+                    <li class="logout"><i class="fas fa-sign-out-alt"></i> <span>Keluar</span></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1 class="page-title">Materi Ajar</h1>
+                <div class="user-profile">
+                    <span id="tanggal-otomatis" class="date-display-box"></span>
+                </div>
+            </header>
+
+            <section class="materi-controls-bar">
+    <div class="filter-group-wrapper">
+        <div class="filter-item">
+            <label><i class="fas fa-chalkboard"></i> Pilih Kelas</label>
+            <select name="pilih-kelas" class="select-clean">
+                <option value="Usmani 1">Usmani 1</option>
+                <option value="Tajwid A">Tajwid A</option>
+            </select>
+        </div>
+
+        <div class="filter-item border-left">
+            <label><i class="fas fa-calendar-alt"></i> Tanggal</label>
+            <input type="date" class="input-date-clean">
+        </div>
+    </div>
+
+    <div class="action-wrapper">
+        <button class="btn-buat-tugas" onclick="openModalTugas()">
+            <i class="fas fa-plus"></i> Buat Tugas Baru
+        </button>
+    </div>
+</section>
+
+    <div class="table-container">
+    <table class="table-materi">
+        <thead>
+            <tr>
+                <th style="width: 50px;">No</th>
+                <th>Judul Materi</th>
+                <th>Jenis File</th>
+                <th>Tanggal Upload</th>
+                <th style="width: 100px;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td class="text-left">Makharijul Huruf</td>
+                <td><i class="fas fa-file-pdf"></i> PDF</td>
+                <td>1 Okt 2025</td>
+                <td>
+                    <button class="link-action" onclick="openDetailModal(1)">
+                        <i class="fas fa-eye"></i> Detail
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="text-left">Pengenalan Harakat</td>
+                <td><i class="fas fa-file-powerpoint"></i> PPT</td>
+                <td>3 Okt 2025</td>
+                <td>
+                    <button class="link-action" onclick="openDetailModal(2)">
+                        <i class="fas fa-eye"></i> Detail
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div id="modalTugas" class="modal">
+        <div class="modal-content task-modal">
+            <span class="close-button" onclick="closeModalTugas()">&times;</span>
+            <h3><i class="fas fa-edit"></i> Buat Tugas</h3>
+            <p class="modal-subtitle">Isi detail tugas yang akan dikirimkan ke aplikasi santri.</p>
+            
+            <div class="form-group task-field">
+                <label><i class="fas fa-align-left"></i> Deskripsi / Instruksi</label>
+                <textarea id="modalTugasDesc" class="textarea-detail" placeholder="Tulis instruksi tugas di sini (misal: Hafalan An-Naba)..."></textarea>
+            </div>
+            
+            <div class="form-group task-field">
+                <label><i class="fas fa-link"></i> Link Lampiran (Opsional)</label>
+                <input type="text" id="modalTugasLink" class="input-detail" placeholder="https://link-materi-atau-video.com">
+            </div>
+
+            <div class="form-group task-field">
+                <label><i class="fas fa-file-pdf"></i> Upload Dokumen (Opsional)</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="modalTugasFile">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-batal" onclick="closeModalTugas()">Batal</button>
+                <button class="btn-simpan" onclick="handleKirimTugas()">Kirim ke Kelas</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastNotification" class="toast"></div>
+
+    <script src="pengajar.js"></script>
+</body>
+</html>
