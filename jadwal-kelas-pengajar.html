@@ -33,62 +33,58 @@
         </aside>
 
         <main class="main-content">
-            <header class="top-header">
+            
+            <header class="header-jadwal-layout">
                 <h1 class="page-title">Jadwal Kelas Saya</h1>
-                <div class="user-profile">
-                    <span id="tanggal-otomatis" class="date-display-box"></span>
-                </div>
+                <div class="date-badge-pill">Sabtu, 27 Desember 2025</div>
             </header>
 
-            <section class="jadwal-page-container">
-                <div class="card filter-card">
-                    <div class="filter-group">
-                        <label>Pilih Kelas:</label>
-                        <select name="pilih-kelas" class="custom-select-minimal">
-                            <option value="Semua">Semua Kelas</option>
-                            <option value="Usmani 1">Usmani 1</option>
-                            <option value="Tajwid A">Tajwid A</option>
-                        </select>
-                    </div>
-                    <button class="btn-export">
-                        <i class="fas fa-file-excel"></i> Ekspor Excel
-                    </button>
+            <div class="filter-card">
+                <div class="filter-group">
+                    <label>Pilih Kelas:</label>
+                    <select class="custom-select-minimal">
+                        <option>Semua Kelas</option>
+                        <option>Usmani 1</option>
+                        <option>Tajwid A</option>
+                    </select>
                 </div>
+                <button class="btn-export">
+                    <i class="fas fa-file-excel"></i> Ekspor Excel
+                </button>
+            </div>
 
-                <div class="table-container">
-                    <table class="table-jadwal-clean">
-                        <thead>
-                            <tr>
-                                <th style="text-align: left; padding-left: 20px;">Kelas</th>
-                                <th>Hari</th>
-                                <th>Tanggal</th> <th>Waktu</th>
-                                <th>Durasi</th>
-                                <th>Kategori</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="text-align: left; padding-left: 20px;"><strong>Usmani 1</strong></td>
-                                <td>Senin</td>
-                                <td>26/12/2025</td>
-                                <td><span class="time-tag">08:00 - 09:30</span></td>
-                                <td>90 Menit</td>
-                                <td><span class="badge-category">Dewasa</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: left; padding-left: 20px;"><strong>Tajwid A</strong></td>
-                                <td>Rabu</td>
-                                <td>28/12/2025</td>
-                                <td><span class="time-tag">10:00 - 11:30</span></td>
-                                <td>90 Menit</td>
-                                <td><span class="badge-category child">Anak-anak</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            <div class="table-container">
+                <table class="table-jadwal-clean">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding-left: 20px;">Kelas</th>
+                            <th>Hari</th>
+                            <th>Tanggal</th>
+                            <th>Waktu</th>
+                            <th>Durasi</th>
+                            <th>Kategori</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: left; padding-left: 20px;"><strong>Usmani 1</strong></td>
+                            <td>Senin</td>
+                            <td>26/12/2025</td>
+                            <td><span class="time-tag">08:00 - 09:30</span></td>
+                            <td>90 Menit</td>
+                            <td><span class="badge-category">Dewasa</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left; padding-left: 20px;"><strong>Tajwid A</strong></td>
+                            <td>Rabu</td>
+                            <td>28/12/2025</td>
+                            <td><span class="time-tag">10:00 - 11:30</span></td>
+                            <td>90 Menit</td>
+                            <td><span class="badge-category child">Anak-anak</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </main>
     </div>
 

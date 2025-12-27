@@ -33,84 +33,83 @@
                 </div>
             </header>
 
-            <section class="riwayat-page-content">
-                <div class="card riwayat-main-card">
-                    
-                    <div class="filter-riwayat-row">
-                        <div class="filter-group">
-                            <label><i class="fas fa-book"></i> Pilih Kelas</label>
-                            <select id="filterKelasRiwayat">
-                                <option value="Tajwid">Tajwid</option>
-                                <option value="Usmani 1">Usmani 1</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label><i class="fas fa-users"></i> Kategori</label>
-                            <select id="filterKategoriRiwayat">
-                                <option value="Anak-anak">Anak-anak</option>
-                                <option value="Dewasa">Dewasa</option>
-                            </select>
-                        </div>
-                        <button class="btn-export"><i class="fas fa-file-pdf"></i> Export PDF</button>
-                    </div>
-
-                    <div class="stats-riwayat-row">
-                        <div class="stat-card">
-                            <div class="stat-icon icon-hadir"><i class="fas fa-user-check"></i></div>
-                            <div class="stat-info">
-                                <p>Total Hadir</p>
-                                <h3 id="statTotalHadir">1</h3>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon icon-izin"><i class="fas fa-user-times"></i></div>
-                            <div class="stat-info">
-                                <p>Total Izin/Sakit</p>
-                                <h3 id="statTotalIzin">0</h3>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon icon-materi"><i class="fas fa-book-open"></i></div>
-                            <div class="stat-info">
-                                <p>Materi Terakhir</p>
-                                <h3 id="statMateriTerakhir">-</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-wrapper">
-                        <table class="table-riwayat">
-                            <thead>
-                                <tr>
-                                    <th>NO</th>
-                                    <th>NAMA</th>
-                                    <th>HARI / TANGGAL</th>
-                                    <th>KEHADIRAN</th>
-                                    <th>CATATAN SANTRI</th>
-                                    <th>MATERI KELAS</th>
-                                </tr>
-                            </thead>
-                            <tbody id="riwayatBody">
-                                <tr>
-                                    <td>1</td>
-                                    <td><strong>Ahmad Fauzi</strong></td>
-                                    <td>2025-12-23</td>
-                                    <td><span class="badge-status badge-hadir">Hadir</span></td>
-                                    <td>-</td>
-                                    <td>Belum ada materi</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="riwayat-footer">
-                        <a href="absensi-pengajar.html" class="btn-kembali-absen">
-                            <i class="fas fa-arrow-left"></i> Kembali ke Absensi
-                        </a>
-                    </div>
-                </div>
-            </section>
-        </main>
+            <div class="riwayat-main-card">
+    <div class="filter-riwayat-row">
+        <div class="filter-container">
+    <div class="filter-item">
+        <label><i class="fas fa-book"></i> Pilih Kelas</label>
+        <select id="filterKelas">
+            <option value="" disabled selected>Pilih Kelas...</option>
+            <option value="tajwid">Tajwid</option>
+            <option value="tahsin">Tahsin</option>
+            <option value="tahfidz">Tahfidz</option>
+        </select>
     </div>
-</body>
-</html>
+
+    <div class="filter-item">
+        <label><i class="fas fa-user-graduate"></i> Kategori</label>
+        <select id="filterKategori">
+            <option value="anak-anak">Anak-anak</option>
+            <option value="remaja">Remaja</option>
+            <option value="dewasa">Dewasa</option>
+        </select>
+    </div>
+</div>
+        <button class="btn-export">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </button>
+    </div>
+
+    <div class="stats-riwayat-row">
+        <div class="stat-card">
+            <div class="stat-icon icon-hadir"><i class="fas fa-user-check"></i></div>
+            <div class="stat-info">
+                <p>Total Hadir</p>
+                <h3>1</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-izin"><i class="fas fa-user-times"></i></div>
+            <div class="stat-info">
+                <p>Total Izin/Sakit</p>
+                <h3>0</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-materi"><i class="fas fa-book-open"></i></div>
+            <div class="stat-info">
+                <p>Materi Terakhir</p>
+                <h3>-</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-riwayat">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Hari / Tanggal</th>
+                    <th>Kehadiran</th>
+                    <th>Catatan Santri</th>
+                    <th>Materi Kelas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Ahmad Fauzi</strong></td>
+                    <td>2025-12-23</td>
+                    <td><span class="badge-status badge-hadir">Hadir</span></td>
+                    <td>-</td>
+                    <td>Belum ada materi</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="absensi-pengajar.html" class="btn-kembali-absen">
+        <i class="fas fa-arrow-left"></i> Kembali ke Absensi
+    </a>
+</div>

@@ -146,65 +146,6 @@
                 </div>
             </div>
         </div> 
-<div class="right-column">
-    <div class="card calendar-card">
-        <h3 id="calendar-month-year"></h3>
-        <div id="calendar-days" class="calendar-days"></div>
-    </div>
-
-    <div class="card announcement-card">
-        <div class="announcement-summary-wrapper">
-            <div class="announcement-header-info">
-                <i class="fas fa-bullhorn main-broadcast-icon"></i>
-                <span class="main-announcement-text">Pengumuman & Reminder</span>
-            </div>
-            <p class="instruction-text" style="font-size: 11px; color: #888; margin-bottom: 10px;">Klik tanggal untuk tambah catatan.</p>
-            
-            <div id="announcement-summary-box" class="summary-box">
-                <span class="count-text">Terdapat <strong id="note-count">0</strong> catatan aktif</span>
-                <button class="btn-show-list" onclick="openNoteListModal()">
-                    Lihat Semua Catatan <i class="fas fa-external-link-alt"></i>
-                </button>
-            </div>
-        </div>
-        <div id="announcement-list" style="display: none;"></div>
-    </div>
-</div>
-
-<div id="noteListModal" class="modal">
-    <div class="modal-content note-list-modal">
-        <span class="close-button" onclick="closeNoteListModal()">&times;</span>
-        <div class="modal-header">
-            <h3><i class="fas fa-list-ul"></i> Daftar Semua Catatan</h3>
-            <p>Kelola semua pengumuman dan reminder Anda di sini.</p>
-        </div>
-        <hr>
-        <div id="full-note-list" class="full-note-scroll-area">
-            </div>
-    </div>
-</div>
-
-    <div id="reminderModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h4 id="selected-date-text">Tanggal: -</h4>
-        <textarea id="reminderInput" placeholder="Tulis pengumuman/reminder di sini..."></textarea>
-        <div class="modal-footer">
-    <button class="btn-batal" onclick="closeReminderModal()">Batal</button>
-    <button class="btn-simpan" id="saveReminderBtn">Simpan</button>
-</div>
-    </div>
-</div>
-<div id="detailAnnouncementModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button" onclick="closeDetailModal()">&times;</span>
-        <h4 id="detail-date" style="color: #888; font-size: 12px;"></h4>
-        <div id="detail-text" style="margin-top: 15px; line-height: 1.6; color: #333;"></div>
-        <div class="modal-footer">
-            <button class="btn-batal" onclick="closeDetailModal()">Tutup</button>
-        </div>
-    </div>
-</div>
 <div id="profilOverlay" class="modal-overlay">
     <div class="modal-profil">
         

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pengajar - Sahabat Quran</title>
+    <title>Materi Ajar - Sahabat Quran</title>
     <link rel="stylesheet" href="pengajar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -41,79 +41,152 @@
             </header>
 
             <section class="materi-controls-bar">
-    <div class="filter-group-wrapper">
-        <div class="filter-item">
-            <label><i class="fas fa-chalkboard"></i> Pilih Kelas</label>
-            <select name="pilih-kelas" class="select-clean">
-                <option value="Usmani 1">Usmani 1</option>
-                <option value="Tajwid A">Tajwid A</option>
-            </select>
-        </div>
+                <div class="filter-group-wrapper">
+                    <div class="filter-item">
+                        <label><i class="fas fa-chalkboard"></i> Pilih Kelas</label>
+                        <select name="pilih-kelas" class="select-clean">
+                            <option value="Usmani 1">Usmani 1</option>
+                            <option value="Tajwid A">Tajwid A</option>
+                        </select>
+                    </div>
+                    <div class="filter-item border-left">
+                        <label><i class="fas fa-calendar-alt"></i> Tanggal</label>
+                        <input type="date" class="input-date-clean">
+                    </div>
+                </div>
+                <div class="action-wrapper">
+                    <button class="btn-buat-tugas" onclick="openModalTugas()">
+                        <i class="fas fa-plus"></i> Buat Tugas Baru
+                    </button>
+                </div>
+            </section>
 
-        <div class="filter-item border-left">
-            <label><i class="fas fa-calendar-alt"></i> Tanggal</label>
-            <input type="date" class="input-date-clean">
-        </div>
+            <div class="table-container">
+                <table class="table-materi">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>Judul Materi</th>
+                            <th>Jenis File</th>
+                            <th>Tanggal Upload</th>
+                            <th style="width: 150px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="main-row" onclick="toggleRow(this)">
+                            <td>1</td>
+                            <td class="text-left">Makharijul Huruf</td>
+                            <td><i class="fas fa-file-pdf"></i> PDF</td>
+                            <td>1 Okt 2025</td>
+                            <td>
+                                <button class="link-action">
+                                    <i class="fas fa-eye"></i> Detail
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="expandable-row">
+                            <td colspan="5">
+                                <div class="expand-content">
+                                    <div class="detail-header-task">
+                                        <h4><i class="fas fa-tasks"></i> Tugas: Pelafalan Huruf Hijaiyah</h4>
+                                        <button class="btn-edit-tugas" onclick="openModalTugas()">
+                                            <i class="fas fa-edit"></i> Edit Tugas
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="detail-grid-layout">
+                                        <div class="col-instruksi">
+                                            <label>Instruksi Tugas:</label>
+                                            <div class="instruction-box">
+                                                <p>Silahkan pelajari makharijul huruf pada buku Usmani hal 10-15 dan setorkan rekaman suara pelafalan huruf Alif sampai Kho.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-meta">
+                                            <div class="meta-card deadline">
+                                                <label>Batas Pengumpulan:</label>
+                                                <div class="value"><i class="fas fa-calendar-check"></i> 30 Desember 2025</div>
+                                            </div>
+                                            <div class="meta-card document">
+                                                <label>Lampiran Materi:</label>
+                                                <a href="#" class="file-link">
+                                                    <i class="fas fa-file-pdf"></i> panduan_makharij.pdf
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="main-row" onclick="toggleRow(this)">
+                            <td>2</td>
+                            <td class="text-left">Pengenalan Harakat</td>
+                            <td><i class="fas fa-file-powerpoint"></i> PPT</td>
+                            <td>3 Okt 2025</td>
+                            <td>
+                                <button class="link-action">
+                                    <i class="fas fa-eye"></i> Detail
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="expandable-row">
+                            <td colspan="5">
+                                <div class="expand-content">
+                                    <div class="detail-header-task">
+                                        <h4><i class="fas fa-tasks"></i> Tugas: Latihan Fathah, Kasrah, Dhommah</h4>
+                                        <button class="btn-edit-tugas" onclick="openModalTugas()">
+                                            <i class="fas fa-edit"></i> Edit Tugas
+                                        </button>
+                                    </div>
+                                    <div class="detail-grid-layout">
+                                        <div class="col-instruksi">
+                                            <label>Instruksi Tugas:</label>
+                                            <div class="instruction-box">
+                                                <p>Tuliskan 5 kata di buku tulis menggunakan harakat lengkap yang sudah dipelajari, lalu foto dan lampirkan di aplikasi.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-meta">
+                                            <div class="meta-card deadline">
+                                                <label>Batas Pengumpulan:</label>
+                                                <div class="value"><i class="fas fa-calendar-check"></i> 05 Januari 2026</div>
+                                            </div>
+                                            <div class="meta-card document">
+                                                <label>Lampiran Materi:</label>
+                                                <a href="#" class="file-link">
+                                                    <i class="fas fa-file-powerpoint"></i> materi_harakat.ppt
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
 
-    <div class="action-wrapper">
-        <button class="btn-buat-tugas" onclick="openModalTugas()">
-            <i class="fas fa-plus"></i> Buat Tugas Baru
-        </button>
-    </div>
-</section>
-
-    <div class="table-container">
-    <table class="table-materi">
-        <thead>
-            <tr>
-                <th style="width: 50px;">No</th>
-                <th>Judul Materi</th>
-                <th>Jenis File</th>
-                <th>Tanggal Upload</th>
-                <th style="width: 100px;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td class="text-left">Makharijul Huruf</td>
-                <td><i class="fas fa-file-pdf"></i> PDF</td>
-                <td>1 Okt 2025</td>
-                <td>
-                    <button class="link-action" onclick="openDetailModal(1)">
-                        <i class="fas fa-eye"></i> Detail
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td class="text-left">Pengenalan Harakat</td>
-                <td><i class="fas fa-file-powerpoint"></i> PPT</td>
-                <td>3 Okt 2025</td>
-                <td>
-                    <button class="link-action" onclick="openDetailModal(2)">
-                        <i class="fas fa-eye"></i> Detail
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div id="modalTugas" class="modal">
+    <div id="modalTugas" class="modal">
         <div class="modal-content task-modal">
             <span class="close-button" onclick="closeModalTugas()">&times;</span>
             <h3><i class="fas fa-edit"></i> Buat Tugas</h3>
-            <p class="modal-subtitle">Isi detail tugas yang akan dikirimkan ke aplikasi santri.</p>
+            <p class="modal-subtitle">Isi detail tugas yang akan dikirimkan ke santri.</p>
             
             <div class="form-group task-field">
                 <label><i class="fas fa-align-left"></i> Deskripsi / Instruksi</label>
-                <textarea id="modalTugasDesc" class="textarea-detail" placeholder="Tulis instruksi tugas di sini (misal: Hafalan An-Naba)..."></textarea>
+                <textarea id="modalTugasDesc" class="textarea-detail" placeholder="Tulis instruksi tugas di sini..."></textarea>
             </div>
             
             <div class="form-group task-field">
                 <label><i class="fas fa-link"></i> Link Lampiran (Opsional)</label>
-                <input type="text" id="modalTugasLink" class="input-detail" placeholder="https://link-materi-atau-video.com">
+                <input type="text" id="modalTugasLink" class="input-detail" placeholder="https://link-materi.com">
+            </div>
+
+            <div class="form-group task-field">
+                <label><i class="fas fa-calendar-alt"></i> Batas Pengumpulan (Deadline)</label>
+                <input type="date" id="modalTugasDeadline" class="input-detail">
             </div>
 
             <div class="form-group task-field">
@@ -129,8 +202,6 @@
             </div>
         </div>
     </div>
-
-    <div id="toastNotification" class="toast"></div>
 
     <script src="pengajar.js"></script>
 </body>
