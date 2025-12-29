@@ -4,17 +4,19 @@
 let catatanKelasHariIni = "";
 let currentSelectedClassData = { materi: "", tugas: "" };
 
-// Inisialisasi Tanggal Langsung
-const elemenTanggal = document.getElementById('tanggal-otomatis');
-if (elemenTanggal) {
-    const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    elemenTanggal.innerHTML = new Date().toLocaleDateString('id-ID', opsi);
-}
+// Inisialisasi Tanggal Otomatis
+const setTanggalOtomatis = () => {
+    const elemenTanggal = document.getElementById('tanggal-otomatis');
+    if (elemenTanggal) {
+        const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        elemenTanggal.innerHTML = new Date().toLocaleDateString('id-ID', opsi);
+    }
+};
+setTanggalOtomatis();
 
 /* ==========================================================================
-   BAGIAN 2: NAVIGASI & MODAL UTILS
+   BAGIAN 2: NAVIGASI & MODAL UTILS (CLOSE LOGIC)
    ========================================================================== */
-
 const navItems = document.querySelectorAll(".nav-item");
 const sections = document.querySelectorAll(".content-section");
 const mainTitle = document.getElementById("main-title");
@@ -42,11 +44,15 @@ navItems.forEach((item) => {
     });
 });
 
+// Fungsi Global untuk Menutup Semua Modal
 function closeAllModals() {
-    document.querySelectorAll(".modal, .modal-overlay").forEach(m => m.style.display = "none");
+    document.querySelectorAll(".modal, .modal-overlay, #profilOverlay, #catatanModal").forEach(m => {
+        m.style.display = "none";
+    });
     document.body.style.overflow = ""; 
 }
 
+// Otomatis pasang fungsi tutup ke semua tombol batal/close
 document.querySelectorAll(".close-button, .btn-batal, .close-profil-btn").forEach(btn => {
     btn.onclick = closeAllModals;
 });
@@ -99,19 +105,20 @@ function handleSimpanPerubahan() {
         const namaDepan = namaLengkap.split(" ")[0]; 
         const inisial = namaLengkap.charAt(0).toUpperCase();
 
+        // Update teks nama & inisial secara real-time di UI
         if (headerUserName) headerUserName.innerText = namaDepan;
         if (miniNama) miniNama.innerText = namaLengkap;
+        if (profileInitials) profileInitials.innerText = inisial;
+        if (headerInitials) headerInitials.innerText = inisial;
+        if (miniInitials) miniInitials.innerText = inisial;
 
+        // Update Kontak di Mini Card
         if (miniEmail && inputEmail) {
             miniEmail.innerHTML = `<i class="fas fa-envelope"></i> ${inputEmail.value.trim() || 'email@email.com'}`;
         }
         if (miniPhone && inputWA) {
             miniPhone.innerHTML = `<i class="fab fa-whatsapp"></i> ${inputWA.value.trim() || '08xxxxxxxx'}`;
         }
-
-        if (profileInitials) profileInitials.innerText = inisial;
-        if (headerInitials) headerInitials.innerText = inisial;
-        if (miniInitials) miniInitials.innerText = inisial;
 
         showToast("Profil berhasil diperbarui!", "success");
         closeAllModals(); 
@@ -130,7 +137,7 @@ function updateInitials() {
 }
 
 /* ==========================================================================
-   BAGIAN 4: PASSWORD & SECURITY
+   BAGIAN 4: PASSWORD & SECURITY (DENGAN VALIDASI PW SAMA)
    ========================================================================== */
 
 function togglePasswordFields() {
@@ -153,21 +160,39 @@ function togglePasswordFields() {
 }
 
 function validatePassword() {
+    const pwLama = document.getElementById("pw-lama").value;
     const pwBaru = document.getElementById("pw-baru").value;
     const pwKonfirmasi = document.getElementById("pw-konfirmasi").value;
     const errorText = document.getElementById("password-error");
     const btnSimpan = document.querySelector(".btn-primary");
 
-    if (pwKonfirmasi === "") {
-        errorText.style.display = "none";
-        return;
+    let errorMessage = "";
+    let isError = false;
+
+    // 1. Cek jika PW baru sama dengan PW lama
+    if (pwBaru !== "" && pwLama !== "" && pwBaru === pwLama) {
+        errorMessage = "Tidak boleh memasukkan password yang sama!";
+        isError = true;
+    } 
+    // 2. Cek jika PW konfirmasi tidak cocok
+    else if (pwKonfirmasi !== "" && pwBaru !== pwKonfirmasi) {
+        errorMessage = "Konfirmasi password tidak cocok!";
+        isError = true;
     }
 
-    const isMatch = pwBaru === pwKonfirmasi;
-    errorText.style.display = isMatch ? "none" : "block";
-    if (btnSimpan) {
-        btnSimpan.disabled = !isMatch;
-        btnSimpan.style.opacity = isMatch ? "1" : "0.5";
+    if (isError) {
+        errorText.innerText = errorMessage;
+        errorText.style.display = "block";
+        if (btnSimpan) {
+            btnSimpan.disabled = true;
+            btnSimpan.style.opacity = "0.5";
+        }
+    } else {
+        errorText.style.display = "none";
+        if (btnSimpan) {
+            btnSimpan.disabled = false;
+            btnSimpan.style.opacity = "1";
+        }
     }
 }
 
@@ -180,45 +205,38 @@ function toggleVisibility(inputId, icon) {
 }
 
 /* ==========================================================================
-   BAGIAN 5: ABSENSI, CATATAN & TOAST SANTRI
+   BAGIAN 5: ABSENSI, CATATAN & OTOMATISASI TOAST SANTRI
    ========================================================================== */
 
-// Toast Otomatis Status Santri
+// 1. OTOMATIS TOAST SAAT STATUS SANTRI BERUBAH
+// Menggunakan event delegation agar tetap jalan meski halaman berpindah-pindah
 document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('select-status-santri')) {
+    if (e.target && e.target.classList.contains('select-status-santri')) {
         const row = e.target.closest('tr');
         if (!row) return;
 
-        const namaSantri = row.cells[1].innerText;
+        // Ambil nama dari kolom kedua (index 1)
+        const namaSantri = row.cells[1] ? row.cells[1].innerText : "Santri";
         const status = e.target.value;
 
         if (status !== "") {
-            let tipe = (status === "Hadir") ? "success" : (status === "Alfa" ? "error" : "info");
+            // Tentukan warna toast berdasarkan status
+            let tipe = "info";
+            if (status === "Hadir") tipe = "success";
+            if (status === "Alfa") tipe = "error";
+
+            // Munculkan toast
             showToast(`Absensi ${namaSantri}: ${status.toUpperCase()}`, tipe);
+            
+            // Efek visual highlight pada baris tabel
+            row.style.transition = "background-color 0.3s";
             row.style.backgroundColor = "rgba(45, 90, 63, 0.05)";
             setTimeout(() => { row.style.backgroundColor = ""; }, 1000);
         }
     }
 });
 
-function handleSimpanAbsenPengajar() {
-    const statusEl = document.getElementById('statusAbsenPengajar');
-    const jamDisplay = document.getElementById('jamAbsenDisplay');
-    const boxJam = document.getElementById('boxJamAbsen');
-
-    if (statusEl && statusEl.value !== "") {
-        const sekarang = new Date();
-        const waktuString = `${sekarang.getHours().toString().padStart(2, '0')}.${sekarang.getMinutes().toString().padStart(2, '0')}`;
-
-        if (jamDisplay) jamDisplay.innerText = `${waktuString} - Selesai`;
-        if (boxJam) boxJam.style.display = "inline-flex";
-
-        showToast(`Absensi tercatat jam ${waktuString}`, "success");
-    } else {
-        showToast("Pilih status kehadiran!", "error");
-    }
-}
-
+// 2. FUNGSI BUKA MODAL CATATAN KELAS
 function openCatatanModal() {
     const modalCatatan = document.getElementById("catatanModal");
     if (modalCatatan) {
@@ -226,147 +244,83 @@ function openCatatanModal() {
         const noteInput = document.getElementById("classNoteInput");
         if (noteInput) { 
             noteInput.value = catatanKelasHariIni; 
-            noteInput.focus(); 
+            noteInput.focus();  
         }
     }
 }
 
-document.getElementById("saveNoteButton")?.addEventListener("click", () => {
-    const noteInput = document.getElementById("classNoteInput");
-    if (noteInput && noteInput.value.trim()) {
-        catatanKelasHariIni = noteInput.value.trim();
-        showToast("Catatan harian disimpan!", "success");
-        closeAllModals();
-    }
-});
+// 3. LOGIKA TOMBOL SIMPAN CATATAN
+const btnSimpanCatatan = document.getElementById("saveNoteButton");
+if (btnSimpanCatatan) {
+    btnSimpanCatatan.onclick = function() {
+        const noteInput = document.getElementById("classNoteInput");
+        if (noteInput && noteInput.value.trim() !== "") {
+            catatanKelasHariIni = noteInput.value.trim();
+            showToast("Catatan harian berhasil disimpan!", "success");
+            closeAllModals(); // Menutup modal catatan
+        } else {
+            showToast("Harap isi catatan materi terlebih dahulu!", "error");
+        }
+    };
+}
 
-/* ===========================================
-// Fungsi Utama Update Jam Absensi Pengajar
-============================================== */
+// 4. LOGIKA ABSENSI PENGAJAR (JAM OTOMATIS)
 function handleSimpanAbsenPengajar() {
     const statusEl = document.getElementById('statusAbsenPengajar');
     const jamDisplay = document.getElementById('jamAbsenDisplay');
     const boxJam = document.getElementById('boxJamAbsen');
 
     if (statusEl && statusEl.value !== "") {
-        // Ambil waktu sistem saat ini
         const sekarang = new Date();
         const jam = sekarang.getHours().toString().padStart(2, '0');
         const menit = sekarang.getMinutes().toString().padStart(2, '0');
         const waktuString = `${jam}.${menit}`;
 
-        // Update teks jam
-        if (jamDisplay) {
-            jamDisplay.innerText = `${waktuString} - Selesai`;
-        }
+        if (jamDisplay) jamDisplay.innerText = `${waktuString} - Selesai`;
+        if (boxJam) boxJam.style.setProperty('display', 'inline-flex', 'important');
 
-        // Munculkan box jam (Ubah display dari none ke inline-flex)
-        if (boxJam) {
-            boxJam.style.setProperty('display', 'inline-flex', 'important');
-        }
-
-        showToast(`Absensi pengajar berhasil dicatat jam ${waktuString}`, "success");
+        showToast(`Absensi pengajar tercatat jam ${waktuString}`, "success");
     } else {
-        showToast("Pilih status kehadiran terlebih dahulu!", "error");
+        showToast("Pilih status kehadiran pengajar!", "error");
     }
 }
 
-// 1. Event Listener Manual (Tanpa DOMContentLoaded)
-// Pastikan tombol di HTML kamu punya ID "simpanAbsenPengajar"
 const btnSimpanAbsen = document.getElementById('simpanAbsenPengajar');
-if (btnSimpanAbsen) {
-    btnSimpanAbsen.onclick = handleSimpanAbsenPengajar;
-}
-
-// 2. Toast Otomatis Status Santri
-document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('select-status-santri')) {
-        const row = e.target.closest('tr');
-        if (!row) return;
-
-        const namaSantri = row.cells[1].innerText;
-        const status = e.target.value;
-
-        if (status !== "") {
-            let tipe = (status === "Hadir") ? "success" : (status === "Alfa" ? "error" : "info");
-            showToast(`Absensi ${namaSantri}: ${status.toUpperCase()}`, tipe);
-            row.style.backgroundColor = "rgba(45, 90, 63, 0.05)";
-            setTimeout(() => { row.style.backgroundColor = ""; }, 1000);
-        }
-    }
-});
-
-/* ==========================================================================
-   LOGIKA HALAMAN MATERI AJAR (TANPA DOM CONTENT LOADED)
-   ========================================================================== */
-
-/**
- * 1. Fungsi Toggle Detail Materi
- * Membuka/menutup baris detail berdasarkan baris yang diklik
- */
-function toggleRow(row) {
-    // Mencari elemen tr berikutnya (baris detail)
-    const detailRow = row.nextElementSibling;
-
-    if (detailRow && detailRow.classList.contains('expandable-row')) {
-        
-        // Cek status display saat ini
-        const isOpen = detailRow.style.display === 'table-row';
-
-        // Tutup semua baris detail lain agar rapi (Accordion Mode)
-        document.querySelectorAll('.expandable-row').forEach(el => {
-            el.style.display = 'none';
-        });
-        document.querySelectorAll('.main-row').forEach(el => {
-            el.classList.remove('active');
-        });
-
-        // Jalankan logika buka-tutup
-        if (!isOpen) {
-            detailRow.style.display = 'table-row';
-            row.classList.add('active');
-        } else {
-            detailRow.style.display = 'none';
-            row.classList.remove('active');
-        }
-    }
-}
-
-/**
- * 2. Fungsi Tanggal Otomatis
- * Langsung dijalankan tanpa menunggu event listener
- */
-function setTanggalOtomatis() {
-    const tanggalBox = document.getElementById('tanggal-otomatis');
-    if (tanggalBox) {
-        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        tanggalBox.innerText = new Date().toLocaleDateString('id-ID', options);
-    }
-}
-
-// Panggil fungsi tanggal segera setelah file JS terbaca
-setTanggalOtomatis();
-
+if (btnSimpanAbsen) btnSimpanAbsen.onclick = handleSimpanAbsenPengajar;
 
 
 /* ==========================================================================
-   BAGIAN 6: UTILS
+   BAGIAN 6: UTILS & TOAST SYSTEM
    ========================================================================== */
 
 function showToast(message, type = "success") {
-    const toast = document.getElementById("toastNotification");
+    // Pastikan ID ini sesuai dengan yang ada di HTML kamu
+    const toast = document.getElementById("toastNotification"); 
     if (!toast) return;
+
+    // Set konten berdasarkan tipe
+    let icon = "fa-check-circle";
+    if (type === "error") icon = "fa-exclamation-circle";
+    if (type === "info") icon = "fa-info-circle";
+
     toast.innerHTML = `
         <div style="display: flex; align-items: center; gap: 12px;">
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
+            <i class="fas ${icon}"></i>
             <span>${message}</span>
         </div>
         <div class="toast-progress"></div>
     `;
+
+    // Reset class dan tampilkan
     toast.className = `toast show ${type}`;
-    setTimeout(() => { toast.classList.remove("show"); }, 3000);
+
+    // Hilangkan setelah 3 detik
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
 }
 
+// Fungsi pembantu navigasi
 function handleMenuLoad(targetId) {
     if (targetId === "absensi-content") {
         const tglInput = document.getElementById("tanggalAbsensiPengajar");
@@ -375,3 +329,73 @@ function handleMenuLoad(targetId) {
         }
     }
 }
+
+/* ==========================================================================
+   BAGIAN 7: LOGIKA FUNGSIONAL MODAL (MATERI & TUGAS)
+   ========================================================================== */
+
+/**
+ * 1. Fungsi Membuka Modal Materi
+ * Dipanggil melalui: onclick="openMateriModal()"
+ */
+function openMateriModal() {
+    const modal = document.getElementById('modalBuatMateri');
+    if (modal) {
+        // Menggunakan flex agar konten modal berada tepat di tengah (sesuai CSS overlay)
+        modal.style.setProperty('display', 'flex', 'important');
+        document.body.style.overflow = 'hidden'; 
+    } else {
+        console.error("ID 'modalBuatMateri' tidak ditemukan.");
+    }
+}
+
+/**
+ * 2. Fungsi Membuka Modal Tugas
+ * Dipanggil melalui: onclick="openTaskModal()"
+ */
+function openTaskModal() {
+    const modal = document.getElementById('modalBuatTugas');
+    if (modal) {
+        modal.style.setProperty('display', 'flex', 'important');
+        document.body.style.overflow = 'hidden';
+    } else {
+        console.error("ID 'modalBuatTugas' tidak ditemukan.");
+    }
+}
+
+/**
+ * 3. Fungsi Menutup Modal Materi
+ */
+function closeMateriModal() {
+    const modal = document.getElementById('modalBuatMateri');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = ''; 
+    }
+}
+
+/**
+ * 4. Fungsi Menutup Modal Tugas
+ */
+function closeTaskModal() {
+    const modal = document.getElementById('modalBuatTugas');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+/**
+ * 5. Logika Penutupan Global (Klik Overlay)
+ */
+window.onclick = function(event) {
+    const modalMateri = document.getElementById('modalBuatMateri');
+    const modalTugas = document.getElementById('modalBuatTugas');
+
+    if (event.target === modalMateri) {
+        closeMateriModal();
+    }
+    if (event.target === modalTugas) {
+        closeTaskModal();
+    }
+};
