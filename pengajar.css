@@ -417,131 +417,6 @@ table {
     padding-top: 15px;
 }
 
-/* ==========================================================================
-   POPUP TAMBAH CATATAN (SAFE SPECIFIC VERSION)
-   ========================================================================== */
-
-/* Gunakan ID agar sangat spesifik dan tidak bentrok dengan modal lain */
-#catatanModal.modal-materi {
-    display: none; 
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-}
-
-/* Animasi Pop-Out */
-@keyframes popUpCatatan {
-    0% {
-        opacity: 0;
-        transform: scale(0.5) translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-/* Menargetkan modal-content yang ada di dalam #catatanModal saja */
-#catatanModal .modal-content {
-    background-color: #fff;
-    position: relative;
-    padding: 30px;
-    border-radius: 20px;
-    width: 550px; /* Sesuai keinginan tampilan profesional */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    animation: popUpCatatan 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-#catatanModal h3 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-/* Input Area Materi */
-#classNoteInput {
-    width: 100%;
-    height: 180px;
-    padding: 15px;
-    border: 1.5px solid #eee;
-    border-radius: 12px;
-    background-color: #fcfcfc;
-    font-size: 14px;
-    line-height: 1.6;
-    resize: none;
-    outline: none;
-    margin-bottom: 15px;
-    transition: 0.3s;
-}
-
-#classNoteInput:focus {
-    border-color: var(--primary-green);
-    background-color: #fff;
-    box-shadow: 0 0 0 4px rgba(45, 90, 63, 0.05);
-}
-
-/* Tombol X Close */
-#catatanModal .close-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
-    line-height: 1;
-}
-
-#catatanModal .close-button:hover {
-    color: #333;
-}
-
-/* Footer & Buttons */
-#catatanModal .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-}
-
-/* Tombol Batal & Simpan khusus di dalam catatanModal */
-#catatanModal .btn-batal {
-    background-color: #f5f5f5;
-    color: #666;
-    border: 1px solid #ddd;
-    padding: 10px 25px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: 0.2s;
-}
-
-#catatanModal .btn-simpan {
-    background-color: var(--primary-green);
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: 0.3s;
-}
-
-#catatanModal .btn-simpan:hover {
-    background-color: #214430;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(45, 90, 63, 0.2);
-}
 /* =========================================
    MODAL OVERLAY & CONTAINER (PENGATURAN PROFIL)
    ========================================= */
@@ -1773,7 +1648,7 @@ input[type="date"] {
 .btn-kembali-absen:hover { background: #1e412c; box-shadow: 0 8px 15px rgba(45, 90, 67, 0.2); }
 
 /* ==========================================================================
-   HEADER CONTROLS (SEJAJAR LURUS)
+   BAGIAN MATERI AJAR - HEADER CONTROLS (SEJAJAR LURUS)
    ========================================================================== */
 .materi-controls-bar {
     background: #ffffff;
@@ -2157,4 +2032,185 @@ input[type="date"] {
 
 .sqm-field-file::file-selector-button:hover {
     background-color: #c5a059;   /* Tombol berubah emas saat didekati */
+}
+
+/* ==========================================================================
+   BAGIAN: ISI DETAIL MATERI & TUGAS (DYNAMIC GRID SYSTEM)
+   ========================================================================== */
+
+/* 1. Kontainer Utama Detail (Muncul saat Detail diklik) */
+.expand-content {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 2px solid var(--sqm-border);
+    animation: sqmFadeUp 0.4s ease;
+}
+
+/* 2. Header Section (Judul & Tombol Edit) */
+.detail-header-task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #eee;
+}
+
+.detail-header-task h4 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--sqm-primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.detail-header-task h4 i {
+    color: var(--sqm-accent);
+}
+
+/* 3. Layout Grid Utama (Menyejajarkan Tinggi Kiri & Kanan) */
+.detail-grid-layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr; /* Kolom teks lebih lebar */
+    gap: 25px;
+    align-items: stretch; /* Memaksa kotak instruksi menyamai tinggi kartu di kanan */
+}
+
+/* 4. Kolom Instruksi / Ringkasan */
+.col-instruksi {
+    display: flex;
+    flex-direction: column;
+}
+
+.col-instruksi label {
+    display: block;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* Kotak Teks Dinamis (Full Height) */
+.instruction-box.full-height {
+    flex-grow: 1; /* Mengisi ruang sisa agar sejajar dengan kartu kanan */
+    background: var(--sqm-bg-soft);
+    border: 1.5px solid var(--sqm-border);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.instruction-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+/* 5. Kolom Metadata (Kartu Lampiran & Deadline) */
+.col-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.meta-card {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    padding: 15px 20px;
+    border-radius: 12px;
+    transition: var(--sqm-transition);
+}
+
+.meta-card:hover {
+    transform: translateX(5px);
+    border-color: var(--sqm-accent);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.meta-card label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #aaa;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.meta-card .value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 6. Komponen Link & File */
+.file-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--sqm-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.file-link i.fa-file-pdf { color: #e74c3c; } /* Warna Ikon PDF */
+.file-link i.fa-youtube { color: #ff0000; }  /* Warna Ikon YouTube */
+
+.file-link:hover {
+    color: var(--sqm-accent);
+    text-decoration: underline;
+}
+
+/* 7. Utilitas Pendukung */
+.detail-divider {
+    border: 0;
+    border-top: 1px dashed #ddd;
+    margin: 25px 0;
+}
+
+.deadline-text {
+    color: #e67e22; /* Kontras oranye untuk deadline */
+}
+
+/* Tombol Edit di Detail */
+.btn-edit-tugas {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-edit-tugas:hover {
+    background: #f9f9f9;
+    color: var(--sqm-primary);
+    border-color: var(--sqm-primary);
+}
+
+/* 8. Responsivitas Mobile */
+@media (max-width: 900px) {
+    .detail-grid-layout {
+        grid-template-columns: 1fr; /* Menumpuk kolom di layar kecil */
+    }
+    .expand-content {
+        padding: 20px;
+    }
 }

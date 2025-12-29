@@ -399,3 +399,54 @@ window.onclick = function(event) {
         closeTaskModal();
     }
 };
+
+/* ==========================================================================
+   LOGIKA INTERAKSI TABEL (DYNAMIC DETAIL VIEW)
+   ========================================================================== */
+
+/**
+ * Fungsi untuk membuka/menutup detail baris tabel
+ * dan menyesuaikan konten yang tampil (Materi saja, Tugas saja, atau keduanya)
+ */
+function toggleRow(row) {
+    const nextRow = row.nextElementSibling;
+    
+    if (nextRow && nextRow.classList.contains('expandable-row')) {
+        const isVisible = nextRow.style.display === 'table-row';
+        
+        // 1. Sembunyikan semua baris detail lain agar rapi
+        document.querySelectorAll('.expandable-row').forEach(r => r.style.display = 'none');
+        document.querySelectorAll('.main-row').forEach(r => r.classList.remove('active'));
+
+        if (!isVisible) {
+            // 2. Tampilkan baris detail yang diklik
+            nextRow.style.display = 'table-row';
+            row.classList.add('active');
+
+            // 3. LOGIKA OTOMATIS PENYESUAIAN KONTEN
+            // Kita mencari blok materi dan tugas di dalam baris yang dibuka
+            const materiSection = nextRow.querySelector('.materi-box');
+            const tugasSection = nextRow.querySelector('.tugas-box');
+            const divider = nextRow.querySelector('.detail-divider');
+
+            // Contoh pengecekan data (di front-end bisa cek apakah ada teks/isi di dalamnya)
+            const hasMateri = materiSection && materiSection.querySelector('p').innerText.trim() !== "";
+            const hasTugas = tugasSection && tugasSection.querySelector('p').innerText.trim() !== "";
+
+            // Atur tampilan blok Materi
+            if (materiSection) {
+                materiSection.style.display = hasMateri ? 'block' : 'none';
+            }
+
+            // Atur tampilan blok Tugas
+            if (tugasSection) {
+                tugasSection.style.display = hasTugas ? 'block' : 'none';
+            }
+
+            // Tampilkan garis pemisah hanya jika keduanya ada
+            if (divider) {
+                divider.style.display = (hasMateri && hasTugas) ? 'block' : 'none';
+            }
+        }
+    }
+}
