@@ -1650,105 +1650,36 @@ input[type="date"] {
 /* ==========================================================================
    BAGIAN MATERI AJAR - HEADER CONTROLS (SEJAJAR LURUS)
    ========================================================================== */
-.materi-controls-bar {
-    background: #ffffff;
-    padding: 20px 25px;
-    border-radius: 16px;
-    display: flex;
-    align-items: flex-end; /* Menyejajarkan bagian bawah elemen */
-    justify-content: space-between;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    margin-bottom: 25px;
-    gap: 20px;
-}
-
-.filter-group-wrapper { 
-    display: flex; 
-    align-items: flex-end;
-    flex-grow: 1; 
-}
-
-.filter-item { 
-    display: flex; 
-    flex-direction: column; 
-    padding: 0 25px; 
-    flex: 1; 
-}
-
-.filter-item.border-left { border-left: 1.5px solid #f0f0f0; }
-
-.filter-item label { 
-    font-size: 11px; 
-    font-weight: 700; 
-    color: var(--primary-green); 
-    text-transform: uppercase; 
-    margin-bottom: 8px; 
-    letter-spacing: 0.5px;
-}
-
-/* Container Tombol */
-.action-wrapper {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-/* Tombol Mewah */
-.btn-tambah-materi, .btn-buat-tugas {
-    padding: 10px 22px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-tambah-materi {
-    background: var(--accent-gold);
-    color: white;
-    border: none;
-    box-shadow: 0 4px 12px rgba(212, 176, 123, 0.3);
-}
-
-.btn-buat-tugas {
-    background: white;
-    border: 1.5px solid var(--primary-green);
-    color: var(--primary-green);
-}
-
-.btn-tambah-materi:hover, .btn-buat-tugas:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-}
-
-/* --- ROOT VARIABLES --- */
 :root {
+
     --sqm-primary: #2d5a3f;
     --sqm-accent: #c5a059;
     --sqm-bg-soft: #f8fbf9;
     --sqm-border: #edf2ef;
     --sqm-white: #ffffff;
     --sqm-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --sqm-shadow-hover: 0 6px 15px rgba(0, 0, 0, 0.1);
+    --sqm-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- KONTROL HEADER (PILIH KELAS & TANGGAL) --- */
+/* ==========================================================================
+   2. HEADER CONTROLS (FILTER BAR)
+   ========================================================================== */
 .sqm-materi-bar {
     background: var(--sqm-white);
     padding: 25px 30px;
-    border-radius: 15px;
+    border-radius: 16px;
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* Menyejajarkan bagian bawah elemen */
     justify-content: space-between;
     box-shadow: var(--sqm-shadow);
     margin-bottom: 25px;
+    gap: 20px;
 }
 
 .sqm-filter-group {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     flex-grow: 1;
 }
 
@@ -1756,7 +1687,8 @@ input[type="date"] {
     display: flex;
     flex-direction: column;
     padding: 0 25px;
-    min-width: 220px;
+    flex: 1;
+    min-width: 200px;
 }
 
 .sqm-filter-item.sqm-separator {
@@ -1769,12 +1701,12 @@ input[type="date"] {
     color: var(--sqm-primary);
     text-transform: uppercase;
     margin-bottom: 10px;
+    letter-spacing: 0.5px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* SINKRONISASI INPUT BOX */
 .sqm-input-box {
     width: 100%;
     padding: 12px 18px;
@@ -1784,7 +1716,7 @@ input[type="date"] {
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
     outline: none;
-    transition: 0.3s;
+    transition: var(--sqm-transition);
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -1796,28 +1728,32 @@ input[type="date"] {
     box-shadow: 0 0 0 4px rgba(212, 176, 123, 0.1);
 }
 
-/* --- ACTION BUTTONS --- */
+/* ==========================================================================
+   3. ACTION BUTTONS
+   ========================================================================== */
 .sqm-btn-group {
     display: flex;
     gap: 12px;
+    align-items: center;
 }
 
 .sqm-btn-base {
-    padding: 10px 20px;
-    border-radius: 10px;
+    padding: 10px 22px;
+    border-radius: 12px;
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: 0.3s;
+    gap: 10px;
+    transition: var(--sqm-transition);
 }
 
 .sqm-btn-gold {
     background-color: var(--sqm-accent);
     color: white;
     border: none;
+    box-shadow: 0 4px 12px rgba(212, 176, 123, 0.3);
 }
 
 .sqm-btn-outline {
@@ -1827,13 +1763,17 @@ input[type="date"] {
 }
 
 .sqm-btn-base:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    box-shadow: var(--sqm-shadow-hover);
 }
 
-/* --- OVERLAY MODAL --- */
-.sqm-modal-overlay {
-    display: none; /* JS Toggle */
+/* ==========================================================================
+   4. MODAL SYSTEM (POPUP)
+   ========================================================================== */
+.sqm-modal-overlay,
+.task-modal-overlay,
+.materi-modal-overlay {
+    display: none; /* Diaktifkan via JS (flex) */
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
@@ -1843,56 +1783,18 @@ input[type="date"] {
     align-items: center;
 }
 
-.sqm-modal-container {
-    background: var(--sqm-white);
-    border-radius: 20px;
-    width: 90%;
-    max-width: 650px;
-    overflow: hidden;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-}
-
-/* Pastikan ini ada di file pengajar.css */
-.task-modal-overlay, 
-.materi-modal-overlay {
-    display: none; /* Awalnya sembunyi */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    z-index: 10000; /* Angka tinggi agar tidak tertutup apapun */
-    justify-content: center;
-    align-items: center;
-}
-
-/* --- POPUP TAMBAH MATERI & BUAT TUGAS BARU --- */
-.sqm-modal-overlay {
-    display: none; /* JS akan mengubah ini menjadi flex */
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6); /* Latar belakang gelap transparan */
-    backdrop-filter: blur(5px);
-    z-index: 10000;
-    justify-content: center;
-    align-items: center;
-}
-
 .sqm-modal-card {
-    background: #ffffff;
+    background: var(--sqm-white);
     width: 90%;
     max-width: 650px;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    overflow: hidden; /* Penting agar header rounded tetap rapi */
+    overflow: hidden;
     animation: sqmFadeUp 0.3s ease-out;
 }
 
-/* Header Modal */
 .sqm-modal-header {
-    background: #2d5a3f; /* Warna Hijau Utama */
+    background: var(--sqm-primary);
     color: white;
     padding: 20px 30px;
     display: flex;
@@ -1904,22 +1806,16 @@ input[type="date"] {
 .sqm-header-info p { margin: 5px 0 0; font-size: 12px; opacity: 0.8; }
 .sqm-close-icon { cursor: pointer; font-size: 26px; line-height: 1; }
 
-/* Body Modal dengan Grid */
-.sqm-modal-body {
-    padding: 25px 30px;
-}
+.sqm-modal-body { padding: 25px 30px; }
 
 .sqm-grid-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Membagi dua kolom */
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-.sqm-full-width {
-    grid-column: span 2; /* Baris instruksi & file mengambil lebar penuh */
-}
+.sqm-full-width { grid-column: span 2; }
 
-/* Form Grouping */
 .sqm-form-group {
     display: flex;
     flex-direction: column;
@@ -1930,16 +1826,15 @@ input[type="date"] {
 .sqm-form-group label {
     font-weight: 600;
     font-size: 13px;
-    color: #2d5a3f;
+    color: var(--sqm-primary);
 }
 
-/* Input Fields */
 .sqm-field {
     width: 100%;
     padding: 12px;
-    border: 1.5px solid #edf2ef;
+    border: 1.5px solid var(--sqm-border);
     border-radius: 10px;
-    background: #f8fbf9;
+    background: var(--sqm-bg-soft);
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
     outline: none;
@@ -1947,27 +1842,55 @@ input[type="date"] {
 }
 
 .sqm-field:focus {
-    border-color: #D4B07B;
+    border-color: var(--sqm-accent);
     background: white;
 }
 
-.sqm-textarea {
-    height: 100px;
-    resize: none;
+.sqm-textarea { height: 100px; resize: none; }
+
+/* File Input Styling */
+.sqm-field-file {
+    display: inline-block;
+    width: fit-content;
+    min-width: 250px;
+    padding: 8px 12px;
+    background-color: #fcfdfc;
+    border: 1.5px dashed var(--sqm-border);
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: var(--sqm-transition);
 }
 
-/* Footer Modal */
+.sqm-field-file::file-selector-button {
+    background-color: var(--sqm-primary);
+    color: var(--sqm-white);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    margin-right: 12px;
+    cursor: pointer;
+    transition: var(--sqm-transition);
+}
+
+.sqm-field-file:hover { border-color: var(--sqm-primary); background-color: var(--sqm-bg-soft); }
+.sqm-field-file::file-selector-button:hover { background-color: var(--sqm-accent); }
+
 .sqm-modal-footer {
     padding: 15px 30px 25px;
     background: #f8fafc;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    border-top: 1px solid #edf2ef;
+    border-top: 1px solid var(--sqm-border);
 }
 
 .sqm-btn-save {
-    background: #2d5a3f;
+    background: var(--sqm-primary);
     color: white;
     border: none;
     padding: 10px 25px;
@@ -1986,68 +1909,17 @@ input[type="date"] {
     cursor: pointer;
 }
 
-.sqm-btn-save:hover { background: #1e3c2a; }
-
-/* Animasi */
-@keyframes sqmFadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- STYLING CHOOSE FILE (LANGSUNG TERLIHAT RAPI) --- */
-.sqm-field-file {
-    display: inline-block;
-    width: fit-content;          /* Lebar otomatis mengikuti teks */
-    min-width: 250px;            /* Batas lebar minimal agar tetap proporsional */
-    padding: 8px 12px;           /* Padding agar kotak terlihat berisi */
-    background-color: #fcfdfc;   /* Warna latar lembut yang langsung terlihat */
-    border: 1.5px dashed #edf2ef; /* Garis putus-putus yang langsung kontras */
-    border-radius: 12px;         /* Sudut membulat yang permanen */
-    font-family: 'Poppins', sans-serif;
-    font-size: 13px;
-    color: #666;                 /* Warna teks keterangan file */
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Gaya tombol "Choose File" di dalamnya (Langsung Berwarna) */
-.sqm-field-file::file-selector-button {
-    background-color: #2d5a3f;   /* Warna hijau Sahabat Quran langsung muncul */
-    color: #ffffff;              /* Teks putih agar terbaca */
-    border: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 12px;
-    margin-right: 12px;          /* Jarak antara tombol dan nama file */
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-/* Efek interaksi ringan agar tetap dinamis */
-.sqm-field-file:hover {
-    border-color: #2d5a3f;       /* Garis berubah hijau saat didekati */
-    background-color: #f8fbf9;
-}
-
-.sqm-field-file::file-selector-button:hover {
-    background-color: #c5a059;   /* Tombol berubah emas saat didekati */
-}
-
 /* ==========================================================================
-   BAGIAN: ISI DETAIL MATERI & TUGAS (DYNAMIC GRID SYSTEM)
+   5. DYNAMIC DETAIL CONTENT (ACCORDION)
    ========================================================================== */
-
-/* 1. Kontainer Utama Detail (Muncul saat Detail diklik) */
 .expand-content {
-    background-color: #ffffff;
+    background-color: var(--sqm-white);
     padding: 30px 40px;
     border-top: 1px solid #f0f0f0;
     border-bottom: 2px solid var(--sqm-border);
     animation: sqmFadeUp 0.4s ease;
 }
 
-/* 2. Header Section (Judul & Tombol Edit) */
 .detail-header-task {
     display: flex;
     justify-content: space-between;
@@ -2067,23 +1939,16 @@ input[type="date"] {
     gap: 10px;
 }
 
-.detail-header-task h4 i {
-    color: var(--sqm-accent);
-}
+.detail-header-task h4 i { color: var(--sqm-accent); }
 
-/* 3. Layout Grid Utama (Menyejajarkan Tinggi Kiri & Kanan) */
 .detail-grid-layout {
     display: grid;
-    grid-template-columns: 1.6fr 1fr; /* Kolom teks lebih lebar */
+    grid-template-columns: 1.6fr 1fr;
     gap: 25px;
-    align-items: stretch; /* Memaksa kotak instruksi menyamai tinggi kartu di kanan */
+    align-items: stretch; /* Sejajarkan tinggi kiri & kanan */
 }
 
-/* 4. Kolom Instruksi / Ringkasan */
-.col-instruksi {
-    display: flex;
-    flex-direction: column;
-}
+.col-instruksi { display: flex; flex-direction: column; }
 
 .col-instruksi label {
     display: block;
@@ -2095,9 +1960,8 @@ input[type="date"] {
     letter-spacing: 0.5px;
 }
 
-/* Kotak Teks Dinamis (Full Height) */
 .instruction-box.full-height {
-    flex-grow: 1; /* Mengisi ruang sisa agar sejajar dengan kartu kanan */
+    flex-grow: 1;
     background: var(--sqm-bg-soft);
     border: 1.5px solid var(--sqm-border);
     padding: 20px;
@@ -2113,15 +1977,10 @@ input[type="date"] {
     text-align: justify;
 }
 
-/* 5. Kolom Metadata (Kartu Lampiran & Deadline) */
-.col-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+.col-meta { display: flex; flex-direction: column; gap: 15px; }
 
 .meta-card {
-    background: #ffffff;
+    background: var(--sqm-white);
     border: 1px solid #f0f0f0;
     padding: 15px 20px;
     border-radius: 12px;
@@ -2131,7 +1990,7 @@ input[type="date"] {
 .meta-card:hover {
     transform: translateX(5px);
     border-color: var(--sqm-accent);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: var(--sqm-shadow);
 }
 
 .meta-card label {
@@ -2152,7 +2011,6 @@ input[type="date"] {
     gap: 10px;
 }
 
-/* 6. Komponen Link & File */
 .file-link {
     display: flex;
     align-items: center;
@@ -2164,26 +2022,34 @@ input[type="date"] {
     transition: color 0.2s;
 }
 
-.file-link i.fa-file-pdf { color: #e74c3c; } /* Warna Ikon PDF */
-.file-link i.fa-youtube { color: #ff0000; }  /* Warna Ikon YouTube */
+.file-link i.fa-file-pdf { color: #e74c3c; }
+.file-link i.fa-youtube { color: #ff0000; }
+.file-link:hover { color: var(--sqm-accent); text-decoration: underline; }
 
-.file-link:hover {
-    color: var(--sqm-accent);
-    text-decoration: underline;
+.detail-divider { border: 0; border-top: 1px dashed #ddd; margin: 25px 0; }
+.deadline-text { color: #e67e22; }
+
+/* Status Siswa Button */
+.btn-status-santri {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: var(--sqm-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.3s;
 }
 
-/* 7. Utilitas Pendukung */
-.detail-divider {
-    border: 0;
-    border-top: 1px dashed #ddd;
-    margin: 25px 0;
-}
+.btn-status-santri:hover { background: var(--sqm-accent); transform: translateY(-2px); }
 
-.deadline-text {
-    color: #e67e22; /* Kontras oranye untuk deadline */
-}
-
-/* Tombol Edit di Detail */
+/* Edit Button in Detail */
 .btn-edit-tugas {
     background: white;
     border: 1px solid #ddd;
@@ -2193,24 +2059,27 @@ input[type="date"] {
     font-weight: 600;
     color: #666;
     cursor: pointer;
-    transition: 0.3s;
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: 0.3s;
 }
 
-.btn-edit-tugas:hover {
-    background: #f9f9f9;
-    color: var(--sqm-primary);
-    border-color: var(--sqm-primary);
+.btn-edit-tugas:hover { color: var(--sqm-primary); border-color: var(--sqm-primary); }
+
+/* ==========================================================================
+   6. ANIMATIONS & RESPONSIVENESS
+   ========================================================================== */
+@keyframes sqmFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* 8. Responsivitas Mobile */
 @media (max-width: 900px) {
-    .detail-grid-layout {
-        grid-template-columns: 1fr; /* Menumpuk kolom di layar kecil */
-    }
-    .expand-content {
-        padding: 20px;
-    }
+    .sqm-materi-bar { flex-direction: column; align-items: stretch; }
+    .sqm-filter-group { flex-direction: column; }
+    .sqm-filter-item { border-left: none !important; padding: 10px 0; border-bottom: 1px solid var(--sqm-border); }
+    .detail-grid-layout { grid-template-columns: 1fr; }
+    .expand-content { padding: 20px; }
 }
+

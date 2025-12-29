@@ -404,49 +404,142 @@ window.onclick = function(event) {
    LOGIKA INTERAKSI TABEL (DYNAMIC DETAIL VIEW)
    ========================================================================== */
 
-/**
- * Fungsi untuk membuka/menutup detail baris tabel
- * dan menyesuaikan konten yang tampil (Materi saja, Tugas saja, atau keduanya)
- */
+/* ==========================================================================
+   BAGIAN: MODAL CONTROL
+   ========================================================================== */
+
+function openMateriModal() {
+    const el = document.getElementById('modalBuatMateri');
+    if (el) { el.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+
+function openTaskModal() {
+    const el = document.getElementById('modalBuatTugas');
+    if (el) { el.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+
+function openStatusSantriModal() {
+    const el = document.getElementById('modalStatusSantri');
+    if (el) { el.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+
+function closeAllModals() {
+    document.querySelectorAll('.sqm-modal-overlay').forEach(modal => {
+        modal.style.display = 'none';
+    });
+    document.body.style.overflow = '';
+}
+
+// Menutup modal jika area luar (overlay) diklik
+window.onclick = function(event) {
+    if (event.target.classList.contains('sqm-modal-overlay')) {
+        closeAllModals();
+    }
+};
+
+/* ==========================================================================
+   BAGIAN: INTERAKSI TABEL
+   ========================================================================== */
+
 function toggleRow(row) {
     const nextRow = row.nextElementSibling;
-    
     if (nextRow && nextRow.classList.contains('expandable-row')) {
         const isVisible = nextRow.style.display === 'table-row';
         
-        // 1. Sembunyikan semua baris detail lain agar rapi
+        // Tutup semua baris yang terbuka agar fokus pada satu baris
         document.querySelectorAll('.expandable-row').forEach(r => r.style.display = 'none');
         document.querySelectorAll('.main-row').forEach(r => r.classList.remove('active'));
 
         if (!isVisible) {
-            // 2. Tampilkan baris detail yang diklik
             nextRow.style.display = 'table-row';
             row.classList.add('active');
-
-            // 3. LOGIKA OTOMATIS PENYESUAIAN KONTEN
-            // Kita mencari blok materi dan tugas di dalam baris yang dibuka
-            const materiSection = nextRow.querySelector('.materi-box');
-            const tugasSection = nextRow.querySelector('.tugas-box');
-            const divider = nextRow.querySelector('.detail-divider');
-
-            // Contoh pengecekan data (di front-end bisa cek apakah ada teks/isi di dalamnya)
-            const hasMateri = materiSection && materiSection.querySelector('p').innerText.trim() !== "";
-            const hasTugas = tugasSection && tugasSection.querySelector('p').innerText.trim() !== "";
-
-            // Atur tampilan blok Materi
-            if (materiSection) {
-                materiSection.style.display = hasMateri ? 'block' : 'none';
-            }
-
-            // Atur tampilan blok Tugas
-            if (tugasSection) {
-                tugasSection.style.display = hasTugas ? 'block' : 'none';
-            }
-
-            // Tampilkan garis pemisah hanya jika keduanya ada
-            if (divider) {
-                divider.style.display = (hasMateri && hasTugas) ? 'block' : 'none';
-            }
         }
+    }
+}
+
+/* ==========================================================================
+   BAGIAN: NOTIFIKASI SIMPAN
+   ========================================================================== */
+
+function handleSimpanMateri() {
+    alert("Materi baru berhasil disimpan!");
+    closeAllModals();
+}
+
+/* ==========================================================================
+   BAGIAN: AKSI TABEL STATUS SANTRI (PERIKSA & HUBUNGI)
+   ========================================================================== */
+
+/**
+ * 1. ALUR PERIKSA (Buka Modal Penilaian)
+ */
+function openReviewModal(nama, tipeFile, linkFile) {
+    const modal = document.getElementById('modalReviewTugas');
+    const labelNama = document.getElementById('reviewNamaSantri');
+    const previewBox = document.getElementById('previewKontenSantri');
+    
+    labelNama.innerText = "Nama Santri: " + nama;
+    previewBox.innerHTML = ""; // Bersihkan preview sebelumnya
+
+    if (tipeFile === 'link') {
+        // Jika berupa Link Google Drive
+        previewBox.innerHTML = `
+            <i class="fab fa-google-drive fa-3x" style="color: #1da1f2; margin-bottom: 10px;"></i>
+            <p style="font-weight: 600;">Google Drive Document</p>
+            <a href="${linkFile}" target="_blank" class="sqm-btn-base sqm-btn-gold" style="text-decoration:none; margin-top:10px;">
+                <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
+            </a>
+        `;
+    } else if (tipeFile === 'pdf' || tipeFile === 'doc') {
+        // Jika berupa Dokumen (PDF/Word)
+        previewBox.innerHTML = `
+            <i class="fas fa-file-pdf fa-3x" style="color: #e74c3c; margin-bottom: 10px;"></i>
+            <p style="font-weight: 600;">tugas_hafalan.pdf</p>
+            <a href="${linkFile}" download class="sqm-btn-base sqm-btn-outline" style="margin-top:10px;">
+                <i class="fas fa-download"></i> Download File
+            </a>
+        `;
+    } else {
+        // Default: Audio (seperti sebelumnya)
+        previewBox.innerHTML = `
+            <i class="fas fa-file-audio fa-3x" style="color: var(--sqm-accent); margin-bottom: 10px;"></i>
+            <p style="font-weight: 600;">rekaman_makharij.mp3</p>
+            <button class="sqm-btn-base sqm-btn-outline"><i class="fas fa-play"></i> Putar</button>
+        `;
+    }
+
+    modal.style.display = 'flex';
+}
+
+function closeReviewModal() {
+    const modal = document.getElementById('modalReviewTugas');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function simpanPenilaian() {
+    const nilai = document.getElementById('inputNilai').value;
+    if (nilai === "") {
+        showToast("Mohon masukkan nilai terlebih dahulu!", "error");
+        return;
+    }
+    showToast("Penilaian berhasil disimpan ke Rapor!", "success");
+    closeReviewModal();
+}
+
+/**
+ * 2. ALUR HUBUNGI (Kirim WhatsApp Otomatis)
+ */
+function hubungiSantri(nama) {
+    const nomorWA = "628123456789"; // Simulasi: Diambil dari data santri
+    const pesan = encodeURIComponent(
+        `Assalamu'alaikum Ibu/Bapak, mengingatkan kembali bahwa ananda *${nama}* belum mengumpulkan tugas materi Makharijul Huruf. Mohon bantuannya untuk diingatkan. Terima kasih.`
+    );
+    
+    // Konfirmasi sebelum membuka WA
+    if (confirm(`Hubungi ${nama} melalui WhatsApp?`)) {
+        window.open(`https://api.whatsapp.com/send?phone=${nomorWA}&text=${pesan}`, '_blank');
     }
 }
