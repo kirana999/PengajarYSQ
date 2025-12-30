@@ -529,6 +529,13 @@ function simpanPenilaian() {
     closeReviewModal();
 }
 
+function handleHapusMateri() {
+    if (confirm("Apakah Anda yakin ingin menghapus materi ini beserta seluruh tugas di dalamnya?")) {
+        // Logika hapus di sini
+        showToast("Materi berhasil dihapus", "success");
+    }
+}
+
 /**
  * 2. ALUR HUBUNGI (Kirim WhatsApp Otomatis)
  */

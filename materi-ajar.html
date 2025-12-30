@@ -84,23 +84,27 @@
                             <td>30 Des 2025</td>
                             <td><button class="link-action"><i class="fas fa-eye"></i> Detail</button></td>
                         </tr>
+
                         <tr class="expandable-row" style="display: none;">
                             <td colspan="5">
                                 <div class="expand-content">
                                     <div class="detail-section materi-box">
                                         <div class="detail-header-task">
-                                            <h4><i class="fas fa-book-open"></i> Ringkasan Materi</h4>
-                                            <button class="btn-edit-tugas" onclick="openMateriModal()"><i class="fas fa-edit"></i> Edit</button>
+                                            <h4><i class="fas fa-chalkboard-teacher"></i> Ringkasan Materi</h4>
+                                            <div class="sqm-btn-group">
+                                                <button class="btn-edit-tugas" onclick="openMateriModal()"><i class="fas fa-edit"></i> Edit</button>
+                                                <button class="btn-edit-tugas" style="color: #e74c3c; border-color: #e74c3c;" onclick="handleHapusMateri()"><i class="fas fa-trash"></i> Hapus</button>
+                                            </div>
                                         </div>
                                         <div class="detail-grid-layout">
                                             <div class="col-instruksi">
                                                 <div class="instruction-box full-height">
-                                                    <p>Pelajari letak keluarnya huruf (makhraj) Al-Halq dan Al-Lisyan. Fokus pada pelafalan huruf tenggorokan.</p>
+                                                    <p><i class="fas fa-quote-left" style="color: var(--sqm-accent); margin-right: 10px;"></i> Pelajari letak keluarnya huruf (makhraj) Al-Halq dan Al-Lisyan. Fokus pada pelafalan huruf tenggorokan.</p>
                                                 </div>
                                             </div>
                                             <div class="col-meta">
-                                                <div class="meta-card"><label>Modul:</label><a href="#" class="file-link"><i class="fas fa-file-pdf"></i> materi_makharij.pdf</a></div>
-                                                <div class="meta-card"><label>Video:</label><a href="#" class="file-link video-style"><i class="fab fa-youtube"></i> Lihat Tutorial</a></div>
+                                                <div class="meta-card"><label><i class="fas fa-file-lines"></i> Modul:</label><a href="#" class="file-link"><i class="fas fa-file-pdf"></i> materi_makharij.pdf</a></div>
+                                                <div class="meta-card"><label><i class="fas fa-video"></i> Video:</label><a href="#" class="file-link video-style"><i class="fab fa-youtube"></i> Lihat Tutorial</a></div>
                                             </div>
                                         </div>
                                     </div>
@@ -109,21 +113,21 @@
 
                                     <div class="detail-section tugas-box">
                                         <div class="detail-header-task">
-                                            <h4><i class="fas fa-tasks"></i> Tugas Terkait</h4>
+                                            <h4><i class="fas fa-clipboard-list"></i> Tugas Terkait</h4>
                                             <button class="sqm-btn-base sqm-btn-outline" style="padding: 5px 12px; font-size: 12px;" onclick="openTaskModal()">
-                                                <i class="fas fa-plus"></i> Tambah Tugas
+                                                <i class="fas fa-plus-circle"></i> Tambah Tugas
                                             </button>
                                         </div>
                                         <div class="detail-grid-layout">
                                             <div class="col-instruksi">
-                                                <label>Instruksi Tugas:</label>
+                                                <label><i class="fas fa-info-circle"></i> Instruksi Tugas:</label>
                                                 <div class="instruction-box full-height"><p>Setorkan rekaman suara pelafalan huruf hijaiyah dari Alif sampai Kho.</p></div>
                                             </div>
                                             <div class="col-meta">
-                                                <div class="meta-card"><label>Deadline:</label><div class="value deadline-text">31 Des 2025</div></div>
-                                                <div class="meta-card"><label>Lampiran Tugas:</label><a href="#" class="file-link"><i class="fas fa-file-download"></i> panduan_tugas.pdf</a></div>
+                                                <div class="meta-card"><label><i class="fas fa-hourglass-half"></i> Deadline:</label><div class="value deadline-text"><i class="fas fa-calendar-day"></i> 31 Des 2025</div></div>
+                                                <div class="meta-card"><label><i class="fas fa-paperclip"></i> Lampiran Tugas:</label><a href="#" class="file-link"><i class="fas fa-file-word"></i> panduan_tugas.pdf</a></div>
                                                 <button class="btn-status-santri" onclick="openStatusSantriModal()">
-                                                    <i class="fas fa-users"></i> Status Pengerjaan Santri
+                                                    <i class="fas fa-user-check"></i> Status Pengerjaan Santri
                                                 </button>
                                             </div>
                                         </div>
@@ -140,19 +144,19 @@
     <div id="modalBuatMateri" class="sqm-modal-overlay">
         <div class="sqm-modal-card">
             <div class="sqm-modal-header">
-                <h3>Tambah Materi Baru</h3>
+                <h3><i class="fas fa-book-medical"></i> Tambah Materi Baru</h3>
                 <span class="sqm-close-icon" onclick="closeAllModals()">&times;</span>
             </div>
             <div class="sqm-modal-body">
                 <div class="sqm-grid-layout">
-                    <div class="sqm-form-group sqm-full-width"><label>Judul Materi</label><input type="text" id="materiTitle" class="sqm-field"></div>
-                    <div class="sqm-form-group sqm-full-width"><label>Ringkasan</label><textarea id="materiDesc" class="sqm-field sqm-textarea"></textarea></div>
-                    <div class="sqm-form-group sqm-full-width"><label>Upload Modul</label><input type="file" class="sqm-field-file"></div>
+                    <div class="sqm-form-group sqm-full-width"><label><i class="fas fa-book-open"></i> Judul Materi</label><input type="text" id="materiTitle" class="sqm-field"></div>
+                    <div class="sqm-form-group sqm-full-width"><label><i class="fas fa-align-left"></i> Ringkasan</label><textarea id="materiDesc" class="sqm-field sqm-textarea"></textarea></div>
+                    <div class="sqm-form-group sqm-full-width"><label><i class="fas fa-cloud-upload-alt"></i> Upload Modul</label><input type="file" class="sqm-field-file"></div>
                 </div>
             </div>
             <div class="sqm-modal-footer">
-                <button class="sqm-btn-cancel" onclick="closeAllModals()">Batal</button>
-                <button class="sqm-btn-save" onclick="handleSimpanMateri()">Simpan Materi</button>
+                <button class="sqm-btn-cancel" onclick="closeAllModals()"><i class="fas fa-ban"></i> Batal</button>
+                <button class="sqm-btn-save" onclick="handleSimpanMateri()"><i class="fas fa-save"></i> Simpan Materi</button>
             </div>
         </div>
     </div>
@@ -160,19 +164,19 @@
     <div id="modalBuatTugas" class="sqm-modal-overlay">
         <div class="sqm-modal-card">
             <div class="sqm-modal-header">
-                <h3>Buat Tugas Baru</h3>
+                <h3><i class="fas fa-file-signature"></i> Buat Tugas Baru</h3>
                 <span class="sqm-close-icon" onclick="closeAllModals()">&times;</span>
             </div>
             <div class="sqm-modal-body">
                 <div class="sqm-grid-layout">
-                    <div class="sqm-form-group sqm-full-width"><label>Instruksi Tugas</label><textarea id="taskDesc" class="sqm-field sqm-textarea"></textarea></div>
-                    <div class="sqm-form-group"><label>Batas Tanggal</label><input type="date" class="sqm-field"></div>
-                    <div class="sqm-form-group"><label>Lampiran Tugas</label><input type="file" class="sqm-field-file"></div>
+                    <div class="sqm-form-group sqm-full-width"><label><i class="fas fa-align-left"></i> Instruksi Tugas</label><textarea id="taskDesc" class="sqm-field sqm-textarea" placeholder="Tulis instruksi pengerjaan tugas di sini..."></textarea></div>
+                    <div class="sqm-form-group"><label><i class="fas fa-calendar-check"></i> Batas Tanggal</label><input type="date" class="sqm-field"></div>
+                    <div class="sqm-form-group"><label><i class="fas fa-paperclip"></i> Lampiran Tugas</label><input type="file" class="sqm-field-file"></div>
                 </div>
             </div>
             <div class="sqm-modal-footer">
-                <button class="sqm-btn-cancel" onclick="closeAllModals()">Batal</button>
-                <button class="sqm-btn-save" onclick="handleSimpanTugas()">Simpan Tugas</button>
+                <button class="sqm-btn-cancel" onclick="closeAllModals()"><i class="fas fa-ban"></i> Batal</button>
+                <button class="sqm-btn-save" onclick="handleSimpanTugas()"><i class="fas fa-paper-plane"></i> Simpan Tugas</button>
             </div>
         </div>
     </div>
@@ -180,20 +184,20 @@
     <div id="modalStatusSantri" class="sqm-modal-overlay">
         <div class="sqm-modal-card" style="max-width: 800px;">
             <div class="sqm-modal-header">
-                <h3>Status Pengerjaan Santri</h3>
+                <h3><i class="fas fa-list-check"></i> Status Pengerjaan Santri</h3>
                 <span class="sqm-close-icon" onclick="closeAllModals()">&times;</span>
             </div>
             <div class="sqm-modal-body">
                 <table class="table-absensi-santri">
-                    <thead><tr><th>No</th><th>Nama Santri</th><th>Status</th><th>Aksi</th></tr></thead>
+                    <thead><tr><th></i> No</th><th></i> Nama Santri</th><th></i> Status</th><th style="text-align: center;"></i> Aksi</th></tr></thead>
                     <tbody>
-                        <tr><td>1</td><td>Ahmad Fauzi</td><td><span class="badge-status success">Sudah Setor</span></td><td><button class="btn-edit-tugas" onclick="openReviewModal('Ahmad Fauzi')">Periksa</button></td></tr>
-                        <tr><td>2</td><td>Siti Aminah</td><td><span class="badge-status warning">Belum Setor</span></td><td><button class="btn-edit-tugas" style="color: #2d5a3f;" onclick="hubungiSantri('Siti Aminah')"><i class="fab fa-whatsapp"></i> Hubungi</button></td></tr>
+                        <tr><td>1</td><td><strong>Ahmad Fauzi</strong></td><td><span class="badge-status success">Sudah Setor</span></td><td><button class="btn-edit-tugas" onclick="openReviewModal('Ahmad Fauzi')"><i class="fas fa-search"></i> Periksa</button></td></tr>
+                        <tr><td>2</td><td><strong>Siti Aminah</strong></td><td><span class="badge-status warning">Belum Setor</span></td><td><button class="btn-edit-tugas" style="color: #2d5a3f;" onclick="hubungiSantri('Siti Aminah')"><i class="fab fa-whatsapp"></i> Hubungi</button></td></tr>
                     </tbody>
                 </table>
             </div>
             <div class="sqm-modal-footer">
-                <button class="sqm-btn-save" onclick="closeAllModals()">Tutup</button>
+                <button class="sqm-btn-save" onclick="closeAllModals()"><i class="fas fa-times"></i> Tutup</button>
             </div>
         </div>
     </div>
@@ -203,28 +207,28 @@
             <div class="sqm-modal-header">
                 <div class="sqm-header-info">
                     <h3><i class="fas fa-search"></i> Periksa Tugas Santri</h3>
-                    <p id="reviewNamaSantri">Nama Santri: -</p>
+                    <p id="reviewNamaSantri"><i class="fas fa-user"></i> Nama Santri: -</p>
                 </div>
                 <span class="sqm-close-icon" onclick="closeReviewModal()">&times;</span>
             </div>
             <div class="sqm-modal-body">
                 <div class="sqm-grid-layout">
                     <div class="sqm-form-group">
-                        <label>Hasil Setoran Santri:</label>
+                        <label><i class="fas fa-file-audio"></i> Hasil Setoran Santri:</label>
                         <div id="previewKontenSantri" class="instruction-box" style="text-align: center; min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         </div>
                     </div>
                     <div class="sqm-form-group">
-                        <label>Input Nilai (0-100):</label>
+                        <label><i class="fas fa-star"></i> Input Nilai (0-100):</label>
                         <input type="number" id="inputNilai" class="sqm-field">
-                        <label style="margin-top: 10px;">Catatan:</label>
+                        <label style="margin-top: 10px;"></i> Catatan:</label>
                         <textarea id="catatanFeedback" class="sqm-field sqm-textarea"></textarea>
                     </div>
                 </div>
             </div>
             <div class="sqm-modal-footer">
-                <button class="sqm-btn-cancel" onclick="closeReviewModal()">Batal</button>
-                <button class="sqm-btn-save" onclick="simpanPenilaian()">Simpan Nilai</button>
+                <button class="sqm-btn-cancel" onclick="closeReviewModal()"><i class="fas fa-ban"></i> Batal</button>
+                <button class="sqm-btn-save" onclick="simpanPenilaian()"><i class="fas fa-save"></i> Simpan Nilai</button>
             </div>
         </div>
     </div>
