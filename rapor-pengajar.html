@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapor Santri - Sahabat Quran</title>
+    <link rel="stylesheet" href="pengajar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body class="allow-scroll">
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="logoYSQ.png" alt="Logo Sahabat Quran">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard-pengajar.html" class="nav-link"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+                    <li><a href="jadwal-kelas-pengajar.html" class="nav-link"><i class="fas fa-calendar-alt"></i> <span>Jadwal Kelas</span></a></li>
+                    <li><a href="absensi-pengajar.html" class="nav-link"><i class="fas fa-check-square"></i> <span>Absensi</span></a></li>
+                    <li><a href="materi-ajar.html" class="nav-link"><i class="fas fa-book"></i> <span>Materi Ajar</span></a></li>
+                    <li class="active"><a href="rapor-pengajar.html" class="nav-link"><i class="fas fa-file-alt"></i> <span>Rapor</span></a></li>
+                    <li><a href="laporan-pengajar.html" class="nav-link"><i class="fas fa-chart-bar"></i> <span>Laporan</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <ul>
+                    <li><i class="fas fa-user-cog"></i> <span>Profil Pengajar</span></li>
+                    <li class="logout"><i class="fas fa-sign-out-alt"></i> <span>Keluar</span></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1 class="page-title">Rapor Santri</h1>
+                <div class="user-profile">
+                    <span id="tanggal-otomatis" class="date-display-box"></span>
+                </div>
+            </header>
+            
+            <div class="ysq-raport-module">
+                <div class="dashboard-card">
+                    
+                    <div class="ysq-action-bar">
+                        <div class="ysq-filter-group-main">
+                            <div class="filter-item">
+                                <label>Pilih Kelas:</label>
+                                <select class="ysq-select-custom">
+                                    <option>--- Pilih Kelas ---</option>
+                                    <option>Tahsin 2 - Reguler</option>
+                                    <option>Tahfidz Anak - A</option>
+                                </select>
+                            </div>
+                            <div class="filter-item">
+                                <label>Pilih Santri:</label>
+                                <select class="ysq-select-custom">
+                                    <option>--- Pilih Santri ---</option>
+                                    <option>Ahmad Fauzan (202601001)</option>
+                                    <option>Zaidan Ali (202601002)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="ysq-header-tabs-pengajar">
+                            <button class="ysq-tab-btn active" onclick="showTab('tahsin')">Input Tahsin</button>
+                            <button class="ysq-tab-btn" onclick="showTab('rapor-tahfidz')">Input Tahfidz</button>
+                        </div>
+                    </div>
+
+                    <div id="section-tahsin">
+                        <div class="form-container-rapor">
+                            <div class="form-section-title">Komponen Penilaian Tahsin</div>
+                            
+                            <div class="form-grid-rapor">
+                                <div class="form-group-rapor">
+                                    <label>Nilai Pekanan</label>
+                                    <input type="number" class="input-rapor-style val-tahsin" id="n_pekanan" placeholder="0-100" oninput="hitungRataTahsin()">
+                                </div>
+                                <div class="form-group-rapor">
+                                    <label>Ujian Tilawah (Lisan)</label>
+                                    <input type="number" class="input-rapor-style val-tahsin" id="n_tilawah" placeholder="0-100" oninput="hitungRataTahsin()">
+                                </div>
+                                <div class="form-group-rapor">
+                                    <label>Nilai Teori (G-Form)</label>
+                                    <input type="number" class="input-rapor-style val-tahsin" id="n_teori" placeholder="0-100" oninput="hitungRataTahsin()">
+                                </div>
+                                <div class="form-group-rapor">
+                                    <label>Presensi (%)</label>
+                                    <input type="number" class="input-rapor-style val-tahsin" id="n_absen" placeholder="0-100" oninput="hitungRataTahsin()">
+                                </div>
+                            </div>
+
+                            <div class="ysq-row-final-score">
+                                <div class="label-final">RATA-RATA AKHIR</div>
+                                <div class="value-final" id="total_rata_tahsin">0.00</div>
+                            </div>
+
+                            <div class="form-group-rapor form-group-full">
+                                <label>Catatan Progres Santri</label>
+                                <textarea class="input-rapor-style textarea-rapor" id="catatan_progres" placeholder="Evaluasi makhraj dan tajwid..."></textarea>
+                            </div>
+
+                            <div class="form-actions-rapor">
+                                <button class="btn-rapor-batal" onclick="resetFormTahsin()">Batal</button>
+                                <button class="btn-rapor-simpan" onclick="saveData('Tahsin')">
+                                    <i class='bx bx-cloud-upload'></i> Publish Nilai Tahsin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="section-rapor-tahfidz" class="ysq-is-hidden">
+                        <div class="form-container-rapor">
+                            <div class="form-section-title">Input Simakan & Ujian Akhir</div>
+                            
+                            <div class="ysq-table-container-tahfidz">
+                                <table class="ysq-table-premium">
+                                    <thead>
+                                        <tr>
+                                            <th>Juz</th>
+                                            <th>Tanggal Simakan</th>
+                                            <th>Nilai Simakan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tahfidz-tbody">
+                                        </tbody>
+                                </table>
+                            </div>
+
+                            <div class="ysq-info-calculation-grid">
+                                <div class="info-row label-side">
+                                    <span>Rata-rata Simakan Juz:</span>
+                                    <strong id="rata_simakan">0.00</strong>
+                                </div>
+                                <div class="info-row value-side">
+                                    <span>Nilai Ujian Akhir:</span>
+                                    <input type="number" class="input-rapor-style-mini" id="n_uas_tahfidz" placeholder="0" oninput="hitungRataTahfidz()">
+                                </div>
+                            </div>
+
+                            <div class="ysq-row-final-score">
+                                <div class="label-final">RATA-RATA AKHIR</div>
+                                <div class="value-final" id="total_rata_tahfidz">0.00</div>
+                            </div>
+
+                            <div class="form-actions-rapor">
+                                <button class="btn-rapor-batal" onclick="resetFormTahfidz()">Batal</button>
+                                <button class="btn-rapor-simpan" onclick="saveData('Tahfidz')">
+                                    <i class='bx bx-cloud-upload'></i> Publish Rapor Tahfidz
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="rapor-pengajar.js"></script>
+    <script src="pengajar.js"></script>
+</body>
+</html>
