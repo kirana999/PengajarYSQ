@@ -1,131 +1,258 @@
-/**
- * rapor-pengajar.js
- * JS KHUSUS PENGAJAR - MANAJEMEN RAPOR YSQ
- * Menangani validasi nilai 0-100 dan kalkulasi otomatis.
- */
+const API = "/api";
+const token = localStorage.getItem("token");
 
-// 1. INISIALISASI TABEL TAHFIDZ (30 JUZ)
-// Fungsi ini mengisi baris tabel secara otomatis saat script dimuat
-(function initTabelTahfidz() {
-    const tbody = document.getElementById('tahfidz-tbody');
-    if (!tbody) return;
+/* ================= ELEMENT ================= */
+const selectKelas = document.getElementById("selectKelas");
+const selectSantri = document.getElementById("selectSantri");
 
-    let rows = "";
-    for (let i = 1; i <= 30; i++) {
-        rows += `
-            <tr>
-                <td>Juz ${i}</td>
-                <td><input type="date" class="input-rapor-style-mini" style="width: auto;"></td>
-                <td>
-                    <input type="number" class="input-rapor-style-mini val-juz" 
-                           placeholder="0" oninput="validateRange(this); hitungRataTahfidz()">
-                </td>
-            </tr>`;
-    }
-    tbody.innerHTML = rows;
-})();
+let selectedSantri = null;
 
-// 2. FUNGSI VALIDASI NILAI (0-100)
-// Mencegah input nilai di luar standar penilaian YSQ
-function validateRange(input) {
-    const val = parseFloat(input.value);
-    if (val < 0 || val > 100) {
-        alert("Peringatan: Nilai harus berada di rentang 0 - 100.");
-        input.value = ""; 
-        
-        // Update kalkulasi setelah reset
-        if (input.classList.contains('val-tahsin')) hitungRataTahsin();
-        if (input.classList.contains('val-juz') || input.id === 'n_uas_tahfidz') hitungRataTahfidz();
+/* ================= LOAD AWAL ================= */
+document.addEventListener("DOMContentLoaded", () => {
+    loadKelasPengajar();
+    setTanggal();
+});
+
+function setTanggal() {
+    const el = document.getElementById("tanggal-otomatis");
+    if (el) {
+        el.textContent = new Date().toLocaleDateString("id-ID", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
     }
 }
 
-// 3. LOGIKA HITUNG TAHSIN
-// Menghitung rata-rata dari 4 komponen penilaian harian
-function hitungRataTahsin() {
-    const p = parseFloat(document.getElementById('n_pekanan').value) || 0;
-    const t = parseFloat(document.getElementById('n_tilawah').value) || 0;
-    const tr = parseFloat(document.getElementById('n_teori').value) || 0;
-    const a = parseFloat(document.getElementById('n_absen').value) || 0;
-    
-    const total = (p + t + tr + a) / 4;
-    const display = document.getElementById('total_rata_tahsin');
-    
-    if (display) {
-        display.innerText = total.toFixed(2);
+/* ================= LOAD KELAS & SANTRI ================= */
+async function loadKelasPengajar() {
+    try {
+        const res = await fetch(`${API}/kelas/pengajar/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        selectKelas.innerHTML = `<option value="">--- Pilih Kelas ---</option>`;
+        data.forEach(k => {
+            selectKelas.innerHTML += `<option value="${k.id_kelas}">${k.nama_kelas}</option>`;
+        });
+    } catch (err) {
+        console.error("Gagal memuat kelas:", err);
     }
 }
 
-// 4. LOGIKA HITUNG TAHFIDZ
-// Menghitung rata-rata simakan juz yang terisi, lalu dirata-ratakan dengan UAS
-function hitungRataTahfidz() {
-    const inputsJuz = document.querySelectorAll('.val-juz');
-    let totalJuz = 0;
-    let count = 0;
+selectKelas.addEventListener("change", async () => {
+    const idKelas = selectKelas.value;
+    if (!idKelas) return;
 
-    // Hitung rata-rata simakan harian
-    inputsJuz.forEach(input => {
-        const val = parseFloat(input.value);
-        if (!isNaN(val) && val > 0) {
-            totalJuz += val;
+    const res = await fetch(`${API}/kelas/pengajar/detail/${idKelas}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    selectSantri.innerHTML = `<option value="">--- Pilih Santri ---</option>`;
+    data.santri.forEach(s => {
+        selectSantri.innerHTML += `<option value="${s.id_santri}">${s.nama}</option>`;
+    });
+});
+
+selectSantri.addEventListener("change", () => {
+    selectedSantri = selectSantri.value;
+});
+
+/* ================= TAB SYSTEM ================= */
+window.showTab = function (tab) {
+    document.getElementById("section-tahsin").classList.toggle("ysq-is-hidden", tab !== "tahsin");
+    document.getElementById("section-rapor-tahfidz").classList.toggle("ysq-is-hidden", tab === "tahsin");
+
+    const btns = document.querySelectorAll(".ysq-tab-btn");
+    btns[0].classList.toggle("active", tab === "tahsin");
+    btns[1].classList.toggle("active", tab !== "tahsin");
+};
+
+/* ================= LOGIKA PREDIKAT ================= */
+function getPredikat(nilai) {
+    if (nilai >= 90) return "Mumtaz";
+    if (nilai >= 80) return "Jayyid Jiddan";
+    if (nilai >= 70) return "Jayyid";
+    if (nilai >= 60) return "Maqbul";
+    return "Dhaif";
+}
+
+/* ================= HITUNG TAHSIN ================= */
+window.hitungRataTahsin = function () {
+    const vals = document.querySelectorAll(".val-tahsin");
+    let total = 0, count = 0;
+
+    vals.forEach(v => {
+        if (v.value !== "") {
+            total += Number(v.value);
             count++;
         }
     });
 
-    const rataSimakan = count > 0 ? (totalJuz / count) : 0;
-    const displaySimakan = document.getElementById('rata_simakan');
-    if (displaySimakan) displaySimakan.innerText = rataSimakan.toFixed(2);
+    const rata = count ? (total / count) : 0;
+    document.getElementById("total_rata_tahsin").textContent = rata.toFixed(2);
+};
 
-    // Ambil UAS Tahfidz
-    const uasT = parseFloat(document.getElementById('n_uas_tahfidz').value) || 0;
+/* ================= TAHFIDZ : TAMBAH JUZ ================= */
+window.tambahKeDaftar = function () {
+    const inputJuz = document.getElementById("quick_juz");
+    const inputNilai = document.getElementById("quick_nilai");
+    const listBody = document.getElementById("tahfidz-list-body");
 
-    // Kalkulasi Akhir: (Rata Simakan + UAS) / 2
-    // Jika UAS belum ada, hanya tampilkan rata simakan
-    const rataAkhir = uasT > 0 ? (rataSimakan + uasT) / 2 : rataSimakan;
-    
-    const displayFinal = document.getElementById('total_rata_tahfidz');
-    if (displayFinal) displayFinal.innerText = rataAkhir.toFixed(2);
-}
+    const juz = inputJuz.value;
+    const nilai = inputNilai.value;
 
-// 5. NAVIGASI TAB
-// Mengatur perpindahan antar modul Tahsin dan Tahfidz
-function showTab(tab) {
-    const sTahsin = document.getElementById('section-tahsin');
-    const sTahfidz = document.getElementById('section-rapor-tahfidz');
-    const btns = document.querySelectorAll('.ysq-tab-btn');
-
-    if (tab === 'tahsin') {
-        sTahsin.classList.remove('ysq-is-hidden');
-        sTahfidz.classList.add('ysq-is-hidden');
-    } else {
-        sTahsin.classList.add('ysq-is-hidden');
-        sTahfidz.classList.remove('ysq-is-hidden');
+    if (!juz || !nilai) {
+        alert("Juz dan nilai wajib diisi");
+        return;
     }
 
-    // Update status tombol aktif
-    btns.forEach(b => {
-        b.classList.remove('active');
-        if (b.getAttribute('onclick').includes(tab)) b.classList.add('active');
+    const existing = [...listBody.querySelectorAll("tr")].some(tr => tr.dataset?.juz === juz);
+    if (existing) {
+        alert(`Juz ${juz} sudah dimasukkan`);
+        return;
+    }
+
+    const empty = document.getElementById("empty-row");
+    if (empty) empty.remove();
+
+    const tr = document.createElement("tr");
+    tr.dataset.juz = juz;
+    tr.innerHTML = `
+        <td>Juz ${juz}</td>
+        <td>${nilai}</td>
+        <td>
+            <button type="button" class="btn-delete-row" onclick="hapusBarisDaftar(this)">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            <input type="hidden" class="nilai-simakan-hidden" value="${nilai}">
+        </td>
+    `;
+
+    listBody.appendChild(tr);
+    inputJuz.value = "";
+    inputNilai.value = "";
+    inputJuz.focus();
+    hitungRataTahfidz();
+};
+
+/* ================= HAPUS BARIS ================= */
+window.hapusBarisDaftar = function (btn) {
+    btn.closest("tr").remove();
+    const listBody = document.getElementById("tahfidz-list-body");
+    if (listBody.children.length === 0) {
+        listBody.innerHTML = `
+            <tr id="empty-row">
+                <td colspan="3" class="empty-msg">Belum ada data juz yang ditambahkan.</td>
+            </tr>`;
+    }
+    hitungRataTahfidz();
+};
+
+/* ================= HITUNG TAHFIDZ & PREDIKAT ================= */
+window.hitungRataTahfidz = function () {
+    const nilaiEls = document.querySelectorAll(".nilai-simakan-hidden");
+    const elRata = document.getElementById("rata_simakan");
+    const elAkhir = document.getElementById("total_rata_tahfidz");
+    const elPredikat = document.getElementById("predikat_tahfidz");
+    const uas = Number(document.getElementById("n_uas_tahfidz").value || 0);
+
+    let total = 0;
+    nilaiEls.forEach(n => total += Number(n.value));
+
+    const rataSimakan = nilaiEls.length ? total / nilaiEls.length : 0;
+    elRata.textContent = rataSimakan.toFixed(2);
+
+    const nilaiAkhir = (nilaiEls.length > 0) ? (uas > 0 ? (rataSimakan + uas) / 2 : rataSimakan) : 0;
+    elAkhir.textContent = nilaiAkhir.toFixed(2);
+
+    // Update Predikat Otomatis
+    if (elPredikat) {
+        elPredikat.textContent = nilaiAkhir > 0 ? getPredikat(nilaiAkhir) : "-";
+    }
+};
+
+/* ================= SAVE DATA ================= */
+window.saveData = async function (jenis) {
+    if (!selectedSantri) {
+        alert("Pilih santri terlebih dahulu");
+        return;
+    }
+
+    // Ambil Periode sesuai Tab yang aktif
+    const periodeTahsin = document.getElementById("periode_tahsin").value;
+    const periodeTahfidz = document.getElementById("periode_tahfidz").value;
+    
+    if ((jenis === "Tahsin" && !periodeTahsin) || (jenis === "Tahfidz" && !periodeTahfidz)) {
+        alert("Pilih periode semester terlebih dahulu");
+        return;
+    }
+
+    try {
+        if (jenis === "Tahsin") await executeSaveTahsin(periodeTahsin);
+        else await executeSaveTahfidz(periodeTahfidz);
+
+        alert(`Rapor ${jenis} berhasil disimpan`);
+        location.reload();
+    } catch (err) {
+        alert(err || "Terjadi kesalahan saat menyimpan");
+    }
+};
+
+async function executeSaveTahsin(periode) {
+    const body = {
+        id_santri: Number(selectedSantri),
+        periode: periode,
+        nilai_pekanan: Number(document.getElementById("n_pekanan").value),
+        ujian_tilawah: Number(document.getElementById("n_tilawah").value),
+        nilai_teori: Number(document.getElementById("n_teori").value),
+        nilai_presensi: Number(document.getElementById("n_absen").value),
+        catatan: document.getElementById("catatan_progres").value
+    };
+
+    const res = await fetch(`${API}/rapor/tahsin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body)
+    });
+    if (!res.ok) throw (await res.json()).message;
+}
+
+async function executeSaveTahfidz(periode) {
+    const headerRes = await fetch(`${API}/rapor/tahfidz`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id_santri: Number(selectedSantri), periode })
+    });
+
+    const header = await headerRes.json();
+    if (!headerRes.ok) throw header.message;
+
+    const idRapor = header.id_rapor;
+    const rows = document.querySelectorAll("#tahfidz-list-body tr[data-juz]");
+    
+    for (const row of rows) {
+        const juz = row.dataset.juz;
+        const nilai = row.querySelector(".nilai-simakan-hidden").value;
+        await fetch(`${API}/rapor/tahfidz/simakan`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ id_rapor: idRapor, juz: Number(juz), nilai: Number(nilai) })
+        });
+    }
+
+    await fetch(`${API}/rapor/tahfidz/final`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+            id_rapor: idRapor,
+            nilai_ujian_akhir: Number(document.getElementById("n_uas_tahfidz").value)
+        })
     });
 }
 
-// 6. RESET & SAVE DATA
-function resetFormTahsin() {
-    if (confirm("Bersihkan semua input Tahsin?")) {
-        document.querySelectorAll('.val-tahsin').forEach(i => i.value = "");
-        document.getElementById('catatan_progres').value = "";
-        document.getElementById('total_rata_tahsin').innerText = "0.00";
-    }
-}
-
-function resetFormTahfidz() {
-    if (confirm("Bersihkan semua data simakan Tahfidz?")) {
-        document.querySelectorAll('.val-juz').forEach(i => i.value = "");
-        document.getElementById('n_uas_tahfidz').value = "";
-        document.getElementById('rata_simakan').innerText = "0.00";
-        document.getElementById('total_rata_tahfidz').innerText = "0.00";
-    }
-}
-
-function saveData(tipe) {
-    alert(`Data Rapor ${tipe} berhasil disimpan dan siap untuk difinalisasi.`);
-}
+window.resetFormTahsin = () => location.reload();
+window.resetFormTahfidz = () => location.reload();

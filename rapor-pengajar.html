@@ -33,7 +33,7 @@
             </div>
         </aside>
 
-        <main class="main-content">
+         <main class="main-content">
             <header class="top-header">
                 <h1 class="page-title">Rapor Santri</h1>
                 <div class="user-profile">
@@ -48,19 +48,15 @@
                         <div class="ysq-filter-group-main">
                             <div class="filter-item">
                                 <label>Pilih Kelas:</label>
-                                <select class="ysq-select-custom">
-                                    <option>--- Pilih Kelas ---</option>
-                                    <option>Tahsin 2 - Reguler</option>
-                                    <option>Tahfidz Anak - A</option>
-                                </select>
+                                <select id="selectKelas" class="ysq-select-custom">
+                                    <option value="">--- Pilih Kelas ---</option>
+                                  </select>
                             </div>
                             <div class="filter-item">
                                 <label>Pilih Santri:</label>
-                                <select class="ysq-select-custom">
-                                    <option>--- Pilih Santri ---</option>
-                                    <option>Ahmad Fauzan (202601001)</option>
-                                    <option>Zaidan Ali (202601002)</option>
-                                </select>
+                                <select id="selectSantri" class="ysq-select-custom">
+                                    <option value="">--- Pilih Santri ---</option>
+                                  </select>
                             </div>
                         </div>
 
@@ -72,7 +68,17 @@
 
                     <div id="section-tahsin">
                         <div class="form-container-rapor">
-                            <div class="form-section-title">Komponen Penilaian Tahsin</div>
+                            <div class="form-section-header">
+                                <div class="form-section-title">Komponen Penilaian Tahsin</div>
+                                <div class="periode-input-group">
+                                    <label>Periode:</label>
+                                    <select id="periode_tahsin" class="input-periode-style">
+                                        <option value="">-- Pilih Semester --</option>
+                                        <option value="Ganjil 2025/2026">Semester Ganjil 2025/2026</option>
+                                        <option value="Genap 2025/2026">Semester Genap 2025/2026</option>
+                                    </select>
+                                </div>
+                            </div>
                             
                             <div class="form-grid-rapor">
                                 <div class="form-group-rapor">
@@ -114,23 +120,58 @@
 
                     <div id="section-rapor-tahfidz" class="ysq-is-hidden">
                         <div class="form-container-rapor">
-                            <div class="form-section-title">Input Simakan & Ujian Akhir</div>
-                            
+                            <div class="form-section-header">
+                                <div class="form-section-title">Input Simakan & Ujian Akhir</div>
+                                <div class="periode-input-group">
+                                    <label>Periode:</label>
+                                    <select id="periode_tahfidz" class="input-periode-style">
+                                        <option value="">-- Pilih Semester --</option>
+                                        <option value="Ganjil 2025/2026">Semester Ganjil 2025/2026</option>
+                                        <option value="Genap 2025/2026">Semester Genap 2025/2026</option>
+                                    </select>
+                                </div>
+                            </div>
+                    
                             <div class="ysq-table-container-tahfidz">
-                                <table class="ysq-table-premium">
+                                <table class="ysq-table-premium" style="margin-bottom: 0;">
                                     <thead>
                                         <tr>
-                                            <th>Juz</th>
-                                            <th>Tanggal Simakan</th>
-                                            <th>Nilai Simakan</th>
+                                            <th>JUZ</th>
+                                            <th>NILAI SIMAKAN</th>
+                                            <th>AKSI</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tahfidz-tbody">
-                                        </tbody>
+                                    <tbody>
+                                        <tr style="background-color: #f0fdf4;">
+                                            <td>
+                                                <input type="number" id="quick_juz" class="input-rapor-style-mini" placeholder="Juz">
+                                            </td>
+                                            <td>
+                                                <input type="number" id="quick_nilai" class="input-rapor-style-mini" placeholder="0-100">
+                                            </td>
+                                            <td>
+                                                <button type="button" onclick="tambahKeDaftar()">
+                                                    <i class="fas fa-plus"></i> Tambah
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
+                    
+                                <div style="max-height: 250px; overflow-y: auto; border: 1px solid #e2e8f0; border-top: none; background: #fff;">
+                                    <table class="ysq-table-premium" style="margin-top: 0;">
+                                        <tbody id="tahfidz-list-body">
+                                            <tr id="empty-row">
+                                                <td colspan="3" style="text-align: center; color: #94a3b8; padding: 20px; font-style: italic;">
+                                                    Belum ada data juz yang ditambahkan.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-
-                            <div class="ysq-info-calculation-grid">
+                    
+                            <div class="ysq-info-calculation-grid" style="margin-top: 20px;">
                                 <div class="info-row label-side">
                                     <span>Rata-rata Simakan Juz:</span>
                                     <strong id="rata_simakan">0.00</strong>
@@ -140,12 +181,13 @@
                                     <input type="number" class="input-rapor-style-mini" id="n_uas_tahfidz" placeholder="0" oninput="hitungRataTahfidz()">
                                 </div>
                             </div>
-
+                    
                             <div class="ysq-row-final-score">
                                 <div class="label-final">RATA-RATA AKHIR</div>
                                 <div class="value-final" id="total_rata_tahfidz">0.00</div>
+                                <div class="predikat-final" id="predikat_tahfidz">-</div> 
                             </div>
-
+                    
                             <div class="form-actions-rapor">
                                 <button class="btn-rapor-batal" onclick="resetFormTahfidz()">Batal</button>
                                 <button class="btn-rapor-simpan" onclick="saveData('Tahfidz')">
@@ -154,12 +196,10 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </main>
     </div>
-    <script src="rapor-pengajar.js"></script>
-    <script src="pengajar.js"></script>
+    <script type="module" src="rapor-pengajar.js"></script>
 </body>
 </html>
